@@ -1,16 +1,9 @@
-import nc from 'next-connect';
 import Post from '../../model/Post';
 import { authUser } from '../../utils/authUser';
 import connectDb from '../../utils/connectDb';
+import handler from '../../utils/handler';
 connectDb();
-export default nc({
-  onError(error, req, res) {
-    res.status(501).send(`something went wrong ${error}`);
-  },
-  onNoMatch(req, res) {
-    req.status(405).send(`method ${req.method} not allowed`);
-  },
-})
+export default handler
   .get(async (req, res) => {
     const posts = await Post.find();
 
@@ -23,7 +16,7 @@ export default nc({
 
     const post = await Post.create(req.body);
     if (!post) {
-      return res.status(404).send('no post created');
+      return res.status(404).json({ error: 'no post created' });
     }
     res.status(200).json(post);
   });
