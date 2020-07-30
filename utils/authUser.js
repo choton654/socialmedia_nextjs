@@ -3,7 +3,7 @@ import User from '../model/User';
 
 export async function authUser(req, res, next) {
   if (!req.headers.authorization) {
-    return res.status(404).json({ error: 'No Authorization token' });
+    return res.status(404).json({ error: 'Unauthorized' });
   }
   const { userId } = jwt.verify(
     req.headers.authorization,
@@ -15,5 +15,6 @@ export async function authUser(req, res, next) {
     return res.status(404).json({ error: 'No user found' });
   }
   req.user = user;
+  console.log(req.user);
   next();
 }

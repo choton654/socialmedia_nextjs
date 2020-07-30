@@ -39,8 +39,6 @@ export default handler.post(async (req, res) => {
     res.status(200).json({ token });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({ error: 'Error signing up user. Please try again later' });
+    res.status(500).json({ error: error.code });
   }
 });
