@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import Post from '../../../model/Post';
-import connectDb from '../../../utils/connectDb';
-import handler from '../../../utils/handler';
+import Post from '../../model/Post';
+import connectDb from '../../utils/connectDb';
+import handler from '../../utils/handler';
 connectDb();
 export default handler.get(async (req, res) => {
   const {
