@@ -4,6 +4,7 @@ const Post = require('../model/Post');
 const User = require('../model/User');
 const mongoose = require('mongoose');
 const Comment = require('../model/Comment');
+const path = require('path');
 
 router
 
@@ -83,7 +84,7 @@ router
   })
 
   //  upload image
-  .post('/image', authUser, async (req, res) => {
+  .put('/image', authUser, async (req, res) => {
     if (!req.files) {
       return res.status(400).json({
         success: false,
