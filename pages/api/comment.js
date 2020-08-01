@@ -25,19 +25,12 @@ export default handler
       avatar: req.user.avatar,
     }).save();
 
-    // const updatedPost = await Post.findOneAndUpdate(
-    //   { _id: postId },
-    //   { $push: { comments: { text: comment.text, user: req.user._id } } },
-    //   { new: true },
-    // )
-    //   .populate('user', '_id name avatar')
-    //   .populate('comments.user', '_id name avatar')
-    //   .sort({ createdAt: 'desc' });
+    const commentCount = (await Comment.find({ postId })).length;
 
     if (!newComment) {
       return res.status(404).json({ msg: 'faild to create comment' });
     }
-    res.status(200).json(newComment);
+    res.status(200).json({ data: newComment, commentCount });
   })
   .delete(async (req, res) => {
     const {
@@ -58,15 +51,6 @@ export default handler
     }
 
     await Comment.findByIdAndDelete({ _id: commentId });
-
-    // const updatedPost = await Post.findOneAndUpdate(
-    //   { _id: postId },
-    //   { $pull: { comments: { _id: comment._id, user: req.user._id } } },
-    //   { new: true },
-    // )
-    //   .populate('user', '_id name avatar')
-    //   .populate('comments.user', '_id name avatar')
-    //   .sort({ createdAt: 'desc' });
 
     res.status(200).json({ msg: 'comment deleted' });
   });

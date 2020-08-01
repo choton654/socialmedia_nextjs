@@ -8,7 +8,7 @@ export default handler.get(async (req, res) => {
     query: { id },
   } = req;
 
-  const post = await Post.findOne({ _id: id });
+  const post = await Post.findOne({ _id: id }).populate('comments');
   if (!post) {
     return res.status(404).json({ msg: 'no post found' });
   }

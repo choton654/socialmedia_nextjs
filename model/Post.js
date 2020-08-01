@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Schema;
 
 const PostSchema = new mongoose.Schema(
@@ -15,9 +15,19 @@ const PostSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   },
 );
 
+PostSchema.virtual('comments', {
+  ref: 'Comment',
+  localField: '_id',
+  foreignField: 'postId',
+  justone: false,
+  count: true,
+});
+
 const Post = mongoose.models.Post || mongoose.model('Post', PostSchema);
 
-export default Post;
+module.exports = Post;

@@ -3,3 +3,4 @@ node_modules
 
 next.config.*
 now.json
+.env
