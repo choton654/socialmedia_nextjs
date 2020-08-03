@@ -16,7 +16,7 @@ exports.authUser = async (req, res, next) => {
       return res.status(404).json({ error: 'No user found' });
     }
     req.user = user;
-    console.log(req.user);
+    // console.log(req.user);
     next();
   } catch (error) {
     console.error(error);

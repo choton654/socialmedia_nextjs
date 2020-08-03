@@ -105,7 +105,7 @@ router
         return res.status(404).json({ msg: 'no post found' });
       }
 
-      const like = await Like.findOne({ user: req.user._id });
+      const like = await Like.findOne({ user: req.user._id, postId });
 
       if (like) {
         return res.status(400).json({ msg: 'already liked this post' });
@@ -166,8 +166,8 @@ router
       return res.status(404).json({ msg: 'no post created' });
     }
 
-    // res.status(200).json(posts);
-    return app.render(req, res, '/about', { posts });
+    res.status(200).json(posts);
+    // return app.render(req, res, '/about', { posts });
   })
 
   // create a post
