@@ -4,7 +4,8 @@ const Like = require('../model/Like');
 const { authUser } = require('../utils/authUser');
 const Comment = require('../model/Comment');
 const mongoose = require('mongoose');
-const app = require('../app');
+const { app } = require('../app');
+const io = require('../server');
 router
 
   // get a single post
@@ -164,8 +165,9 @@ router
     if (posts.length === 0) {
       return res.status(404).json({ msg: 'no post created' });
     }
-    res.status(200).json(posts);
-    // return app.render(req, res, '/about', req.query);
+
+    // res.status(200).json(posts);
+    return app.render(req, res, '/about', { posts });
   })
 
   // create a post
@@ -176,11 +178,7 @@ router
     if (!post) {
       return res.status(404).json({ error: 'no post created' });
     }
-    const changeStream = Post.watch({ fullDocument: 'updateLookup' });
-    changeStream.on('change', (next) => {
-      // process next document
-      console.log('it changed', next);
-    });
+
     res.status(200).json(post);
   });
 

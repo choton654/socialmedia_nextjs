@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { post } = require('../routes/post');
+const { io } = require('../app');
 const { ObjectId } = mongoose.Schema;
 
 const PostSchema = new mongoose.Schema(
