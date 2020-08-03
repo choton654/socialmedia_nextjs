@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { post } = require('../routes/post');
 const { ObjectId } = mongoose.Schema;
 
 const PostSchema = new mongoose.Schema(
@@ -11,7 +12,6 @@ const PostSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    likes: [{ type: ObjectId, ref: 'User' }],
   },
   {
     timestamps: true,
@@ -24,7 +24,12 @@ PostSchema.virtual('comments', {
   ref: 'Comment',
   localField: '_id',
   foreignField: 'postId',
-  justone: false,
+  count: true,
+});
+PostSchema.virtual('likes', {
+  ref: 'Like',
+  localField: '_id',
+  foreignField: 'postId',
   count: true,
 });
 

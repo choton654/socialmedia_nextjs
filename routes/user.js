@@ -103,23 +103,26 @@ router
 
     file.name = `photo_${req.user._id}${path.parse(file.name).ext}`;
 
-    file.mv(`./static/uploads/${req.user.name}-${file.name}`, async (err) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).json({
-          success: false,
-          err: 'problem with file upload',
-        });
-      }
+    file.mv(
+      `./public/static/uploads/${req.user.name}-${file.name}`,
+      async (err) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({
+            success: false,
+            err: 'problem with file upload',
+          });
+        }
 
-      const updatedUser = await User.findOneAndUpdate(
-        { _id: req.user._id },
-        { avatar: file.name },
-      );
-      res
-        .status(200)
-        .json({ msg: 'image uploaded successfully', data: file.name });
-    });
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: req.user._id },
+          { avatar: file.name },
+        );
+        res
+          .status(200)
+          .json({ msg: 'image uploaded successfully', data: file.name });
+      },
+    );
   });
 
 module.exports = router;

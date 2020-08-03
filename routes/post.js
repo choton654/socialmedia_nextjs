@@ -1,15 +1,19 @@
 const router = require('express').Router();
 const Post = require('../model/Post');
+const Like = require('../model/Like');
 const { authUser } = require('../utils/authUser');
 const Comment = require('../model/Comment');
-
+const mongoose = require('mongoose');
+const app = require('../app');
 router
 
   // get a single post
   .get('/:id', async (req, res) => {
     const { id } = req.params;
 
-    const post = await Post.findOne({ _id: id }).populate('comments');
+    const post = await Post.findOne({ _id: id })
+      .populate('comments')
+      .populate('likes');
     if (!post) {
       return res.status(404).json({ msg: 'no post found' });
     }
@@ -73,18 +77,18 @@ router
       }
 
       const newComment = await new Comment({
-        text,
+        text: text.trim(),
         postId,
         user: req.user._id,
         avatar: req.user.avatar,
       }).save();
 
-      const commentCount = (await Comment.find({ postId })).length;
+      // const commentCount = (await Comment.find({ postId })).length;
 
       if (!newComment) {
         return res.status(404).json({ msg: 'faild to create comment' });
       }
-      res.status(200).json({ data: newComment, commentCount });
+      res.status(200).json({ data: newComment });
     } catch (error) {
       console.error(error);
     }
@@ -100,17 +104,50 @@ router
         return res.status(404).json({ msg: 'no post found' });
       }
 
-      const likeIds = post.likes.map((id) => id.toString());
-      const authUserId = req.user._id.toString();
-      if (likeIds.includes(authUserId)) {
-        await post.likes.pull(authUserId);
+      const like = await Like.findOne({ user: req.user._id });
+
+      if (like) {
+        return res.status(400).json({ msg: 'already liked this post' });
       } else {
-        await post.likes.push(authUserId);
+        await new Like({
+          postId,
+          user: req.user._id,
+        }).save();
       }
-      await post.save();
-      res.status(200).json({ data: post, likeCounts: post.likes.length });
+
+      const likedPost = await Post.findOne({ _id: postId }).populate('likes');
+
+      res.status(200).json({ data: likedPost });
     } catch (error) {
       console.error(error);
+      res.status(500).json({ error: error.code });
+    }
+  })
+
+  // unlike a post
+  .delete('/:postId/unlike', authUser, async (req, res) => {
+    const { postId } = req.params;
+    try {
+      const post = await Post.findOne({ _id: postId });
+
+      if (!post) {
+        return res.status(404).json({ msg: 'no post found' });
+      }
+
+      const like = await Like.findOne({ user: req.user._id });
+
+      if (like) {
+        await like.remove();
+      } else {
+        return res.status(400).json({ msg: 'not like this post' });
+      }
+
+      const likedPost = await Post.findOne({ _id: postId }).populate('likes');
+
+      res.status(200).json({ data: likedPost });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: error.code });
     }
   })
 
@@ -122,11 +159,13 @@ router
         model: 'User',
         select: '_id name avatar',
       })
-      .populate('comments');
+      .populate('comments')
+      .populate('likes');
     if (posts.length === 0) {
       return res.status(404).json({ msg: 'no post created' });
     }
     res.status(200).json(posts);
+    // return app.render(req, res, '/about', req.query);
   })
 
   // create a post
@@ -137,7 +176,11 @@ router
     if (!post) {
       return res.status(404).json({ error: 'no post created' });
     }
-
+    const changeStream = Post.watch({ fullDocument: 'updateLookup' });
+    changeStream.on('change', (next) => {
+      // process next document
+      console.log('it changed', next);
+    });
     res.status(200).json(post);
   });
 
