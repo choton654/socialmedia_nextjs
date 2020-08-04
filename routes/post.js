@@ -3,22 +3,30 @@ const Post = require('../model/Post');
 const Like = require('../model/Like');
 const { authUser } = require('../utils/authUser');
 const Comment = require('../model/Comment');
-const mongoose = require('mongoose');
-const { app } = require('../app');
-const io = require('../server');
+const Notification = require('../model/Notification');
+
 router
 
   // get a single post
   .get('/:id', async (req, res) => {
-    const { id } = req.params;
+    try {
+      let postData = {};
 
-    const post = await Post.findOne({ _id: id })
-      .populate('comments')
-      .populate('likes');
-    if (!post) {
-      return res.status(404).json({ msg: 'no post found' });
+      const post = await Post.findOne({ _id: req.params.id })
+        .populate('comments')
+        .populate('likes');
+      if (!post) {
+        return res.status(404).json({ msg: 'no post found' });
+      }
+      postData = post;
+      postData.comments = [];
+      const comments = await Comment.find({ postId: req.params.id });
+      comments.forEach((comment) => postData.comments.push(comment));
+      return res.status(200).json(postData);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: error.code });
     }
-    res.status(200).json(post);
   })
 
   // delete a post
@@ -33,6 +41,9 @@ router
           .json({ msg: 'you have no permission to delete this post' });
       }
       await Post.findByIdAndDelete({ _id: id });
+      await Comment.remove({ postId: { $in: id } });
+      await Like.remove({ postId: { $in: id } });
+      await Notification.remove({ postId: { $in: id } });
       res.status(200).json({ msg: 'post deleted' });
     } catch (error) {
       console.error(error);
@@ -89,7 +100,7 @@ router
       if (!newComment) {
         return res.status(404).json({ msg: 'faild to create comment' });
       }
-      res.status(200).json({ data: newComment });
+      res.status(200).json({ newComment });
     } catch (error) {
       console.error(error);
     }
@@ -118,7 +129,7 @@ router
 
       const likedPost = await Post.findOne({ _id: postId }).populate('likes');
 
-      res.status(200).json({ data: likedPost });
+      res.status(200).json({ likedPost });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: error.code });
@@ -135,7 +146,7 @@ router
         return res.status(404).json({ msg: 'no post found' });
       }
 
-      const like = await Like.findOne({ user: req.user._id });
+      const like = await Like.findOne({ user: req.user._id, postId });
 
       if (like) {
         await like.remove();
@@ -145,7 +156,7 @@ router
 
       const likedPost = await Post.findOne({ _id: postId }).populate('likes');
 
-      res.status(200).json({ data: likedPost });
+      res.status(200).json({ likedPost });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: error.code });

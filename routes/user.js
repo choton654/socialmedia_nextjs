@@ -3,22 +3,41 @@ const { authUser } = require('../utils/authUser');
 const Post = require('../model/Post');
 const User = require('../model/User');
 const mongoose = require('mongoose');
-const Comment = require('../model/Comment');
+const Notification = require('../model/Notification');
+const Like = require('../model/Like');
 const path = require('path');
 
 router
 
-  // get single user
+  // get any user details
   .get('/:id', async (req, res) => {
-    const { id } = req.params;
-
     try {
-      const user = await User.findOne({ _id: id });
+      let userData = {};
 
-      if (!user) {
+      const user = await User.findOne({ _id: req.params.id });
+
+      if (user) {
+        userData.user = user;
+      } else {
         return res.status(404).json({ msg: 'no user found' });
       }
-      res.status(200).json(user);
+      userData.posts = [];
+      const posts = await Post.find({ user: req.params.id })
+        .populate('comments')
+        .populate('likes')
+        .populate('user');
+      posts.forEach((post) =>
+        userData.posts.push({
+          title: post.title,
+          createdAt: post.createdAt,
+          userHandle: post.userHandle,
+          avatar: post.user.avatar,
+          likeCount: post.likes,
+          commentCount: post.comments,
+          postId: post._id,
+        }),
+      );
+      res.status(200).json(userData);
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: error.code });
@@ -46,6 +65,39 @@ router
       }));
 
       res.status(200).json(post);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: error.code });
+    }
+  })
+
+  //  get own user details
+  .get('/', authUser, async (req, res) => {
+    try {
+      let userData = {};
+      const user = await User.findOne({ _id: req.user._id });
+      if (user) {
+        userData.credential = user;
+      }
+      userData.likes = [];
+      const likes = await Like.find({ user: req.user._id });
+      likes.forEach((like) => userData.likes.push(like));
+      userData.notifications = [];
+      const notifications = await Notification.find({
+        recipient: req.user._id,
+      }).limit(10);
+      notifications.forEach((data) =>
+        userData.notifications.push({
+          recipient: data.recipient,
+          sender: data.sender,
+          createdAt: data.createdAt,
+          screamId: data.screamId,
+          type: data.type,
+          read: data.read,
+          notificationId: data._id,
+        }),
+      );
+      return res.status(200).json(userData);
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: error.code });
@@ -123,6 +175,27 @@ router
           .json({ msg: 'image uploaded successfully', data: file.name });
       },
     );
+  })
+
+  // mark notifications read
+  .put('/notifications', authUser, (req, res) => {
+    try {
+      req.body.forEach(async (id) => {
+        const notification = await Notification.findOne({ _id: id });
+        if (!notification) {
+          return res.status(400).json({ msg: 'no notification found' });
+        }
+        await Notification.findByIdAndUpdate(
+          { _id: id },
+          { read: true },
+          { new: true },
+        );
+      });
+      res.status(200).json({ msg: 'Notifications marked read' });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: error.code });
+    }
   });
 
 module.exports = router;
