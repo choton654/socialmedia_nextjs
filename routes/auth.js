@@ -51,7 +51,7 @@ router
     const { email, password } = req.body;
 
     try {
-      if (isEmpty(email, { ignore_whitespace: true })) {
+      if (isEmpty(email)) {
         return res.status(404).json({ error: 'Email must not be empty' });
       } else if (!isEmail(email)) {
         return res.status(422).json({ error: 'Email must be valid' });

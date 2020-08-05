@@ -168,11 +168,12 @@ router
 
         const updatedUser = await User.findOneAndUpdate(
           { _id: req.user._id },
-          { avatar: file.name },
+          { avatar: `/static/uploads/${req.user.name}-${file.name}` },
+          { new: true },
         );
         res
           .status(200)
-          .json({ msg: 'image uploaded successfully', data: file.name });
+          .json({ msg: 'image uploaded successfully', data: updatedUser });
       },
     );
   })
