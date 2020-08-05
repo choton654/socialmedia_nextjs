@@ -10,7 +10,7 @@ router
 
   // register a user
   .post('/signup', async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, confirmPassword } = req.body;
     try {
       if (!isEmail(email)) {
         return res.status(404).json({ error: 'Email must be valid' });
@@ -22,6 +22,8 @@ router
         return res
           .status(404)
           .json({ error: 'Password must be 6 to 12 letters long' });
+      } else if (password !== confirmPassword) {
+        return res.status(400).json({ error: 'Password not match' });
       }
       const hash = await bcrypt.hash(password, 10);
       const existingUser = await User.findOne({ email });

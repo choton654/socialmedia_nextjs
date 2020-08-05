@@ -39,6 +39,7 @@ function login({ classes }) {
       const res = await Axios.post('/api/v1/auth/login', userData);
 
       console.log(res.data);
+      localStorage.setItem('token', res.data.token);
       setstate({
         ...state,
         loading: false,

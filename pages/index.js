@@ -1,26 +1,16 @@
 import { withStyles } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import Axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Post from '../components/Post';
-function index({ classes }) {
-  const initialState = {
-    posts: [],
-  };
+function index({ classes, posts }) {
+  const initialState = {};
 
   const [state, setstate] = useState(initialState);
 
-  useEffect(() => {
-    async function fetchData() {
-      const res = await Axios.get('/api/v1/post');
-      setstate({ posts: res.data });
-    }
-    fetchData();
-  }, []);
-
   let recentPostMarkup =
-    state.posts.length !== 0 ? (
-      state.posts.map((post) => <Post key={post._id} post={post} />)
+    posts.length !== 0 ? (
+      posts.map((post) => <Post key={post._id} post={post} />)
     ) : (
       <p>loading...</p>
     );
@@ -44,5 +34,12 @@ const styles = (theme) => ({
     margin: '80px auto 0 auto',
   },
 });
+
+index.getInitialProps = async () => {
+  let posts = [];
+  const res = await Axios.get('http://localhost:3000/api/v1/post');
+  posts = res.data;
+  return { posts };
+};
 
 export default withStyles(styles)(index);

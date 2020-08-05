@@ -4,8 +4,9 @@ import Head from 'next/head';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Navbar from '../components/Navbar';
+import { wrapper } from '../redux/store';
 import theme from '../src/theme';
-export default function MyApp(props) {
+function MyApp(props) {
   const { Component, pageProps } = props;
 
   React.useEffect(() => {
@@ -39,3 +40,5 @@ MyApp.propTypes = {
   Component: PropTypes.elementType.isRequired,
   pageProps: PropTypes.object.isRequired,
 };
+
+export default wrapper.withRedux(MyApp);

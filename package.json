@@ -26,11 +26,16 @@
     "mongoose": "^5.9.25",
     "next": "^9.5.0",
     "next-connect": "^0.8.1",
+    "next-redux-wrapper": "^6.0.2",
     "nodemon": "^2.0.4",
     "nookies": "^2.3.2",
     "nprogress": "^0.2.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-redux": "^7.2.1",
+    "redux": "^4.0.5",
+    "redux-devtools-extension": "^2.13.8",
+    "redux-thunk": "^2.3.0",
     "socket.io": "^2.3.0",
     "validator": "^13.1.1"
   }
