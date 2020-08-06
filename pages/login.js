@@ -8,60 +8,57 @@ import {
   withStyles,
 } from '@material-ui/core';
 import Lock from '@material-ui/icons/Lock';
-import Axios from 'axios';
-import router from 'next/router';
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { logInUser } from '../redux/actions/userActions';
+
 function login({ classes }) {
   const initialState = {
     email: '',
     password: '',
-    loading: false,
     error: null,
     isSubmit: false,
   };
 
   const [state, setstate] = useState(initialState);
 
+  const dispatch = useDispatch();
+
+  const store = useSelector((state) => {
+    return {
+      user: state.user,
+      UI: state.UI,
+    };
+  });
+
+  const { loading, error } = store.UI;
+
   const { isSubmit } = state;
   useEffect(() => {
-    if (isSubmit) {
-      logInUser();
-    }
-  }, [isSubmit]);
-
-  const logInUser = async () => {
-    console.log(state);
     const userData = {
       email: state.email,
       password: state.password,
     };
-    try {
-      const res = await Axios.post('/api/v1/auth/login', userData);
-
-      console.log(res.data);
-      localStorage.setItem('token', res.data.token);
+    if (isSubmit) {
+      dispatch(logInUser(userData));
       setstate({
         ...state,
-        loading: false,
         isSubmit: false,
       });
-      router.push('/');
-    } catch (error) {
-      setstate({
-        ...state,
-        error: error.response.data,
-        loading: false,
-        isSubmit: false,
-      });
-      console.error(error);
     }
-  };
+    if (error) {
+      setstate({
+        ...state,
+        error: error,
+        isSubmit: false,
+      });
+    }
+  }, [isSubmit, error]);
 
   const handelSubmit = async (e) => {
     e.preventDefault();
     setstate({
       ...state,
-      loading: true,
       isSubmit: true,
     });
   };
@@ -111,9 +108,9 @@ function login({ classes }) {
               type='submit'
               color='primary'
               variant='contained'
-              disabled={state.loading}
+              disabled={loading}
               className={classes.button}>
-              {state.loading ? <CircularProgress /> : 'Login'}
+              {loading ? <CircularProgress /> : 'Login'}
             </Button>
             <br />
             <small>

@@ -3,32 +3,49 @@ import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import Link from 'next/link';
-import React, { Component } from 'react';
-export class Navbar extends Component {
-  render() {
-    const { classes } = this.props;
-    return (
-      <AppBar className={classes.appBar}>
-        <Toolbar className={classes.toolbarTitle}>
-          <Button color='inherit'>
-            <Link href='/'>
-              <a className={classes.icon}>Home</a>
-            </Link>
-          </Button>
-          <Button color='inherit'>
-            <Link href='/login'>
-              <a className={classes.icon}>Login</a>
-            </Link>
-          </Button>
-          <Button color='inherit'>
-            <Link href='/signup'>
-              <a className={classes.icon}>Signup</a>
-            </Link>
-          </Button>
-        </Toolbar>
-      </AppBar>
-    );
-  }
+import React from 'react';
+import { useDispatch } from 'react-redux';
+import { logOutUser } from '../redux/actions/userActions';
+
+function Navbar({ classes, user }) {
+  const dispatch = useDispatch();
+
+  return (
+    <AppBar className={classes.appBar}>
+      <Toolbar className={classes.toolbarTitle}>
+        {!user ? (
+          <>
+            <Button color='inherit'>
+              <Link href='/login'>
+                <a className={classes.icon}>Login</a>
+              </Link>
+            </Button>
+            <Button color='inherit'>
+              <Link href='/signup'>
+                <a className={classes.icon}>Signup</a>
+              </Link>
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button color='inherit'>
+              <Link href='/'>
+                <a className={classes.icon}>Home</a>
+              </Link>
+            </Button>
+            <Button
+              color='inherit'
+              className={classes.icon}
+              onClick={() => {
+                dispatch(logOutUser());
+              }}>
+              Logout
+            </Button>
+          </>
+        )}
+      </Toolbar>
+    </AppBar>
+  );
 }
 
 const styles = (theme) => ({

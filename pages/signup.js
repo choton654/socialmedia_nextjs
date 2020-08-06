@@ -8,64 +8,60 @@ import {
   withStyles,
 } from '@material-ui/core';
 import GavelIcon from '@material-ui/icons/Gavel';
-import Axios from 'axios';
-import router from 'next/router';
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { signUpUser } from '../redux/actions/userActions';
 function signup({ classes }) {
   const initialState = {
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
-    loading: false,
     error: null,
     isSubmit: false,
   };
 
   const [state, setstate] = useState(initialState);
 
+  const dispatch = useDispatch();
+
+  const store = useSelector((state) => {
+    return {
+      user: state.user,
+      UI: state.UI,
+    };
+  });
+
+  const { loading, error } = store.UI;
+
   const { isSubmit } = state;
   useEffect(() => {
-    if (isSubmit) {
-      signUpUser();
-    }
-  }, [isSubmit]);
-
-  const signUpUser = async () => {
-    console.log(state);
     const userData = {
       name: state.name,
       email: state.email,
       password: state.password,
       confirmPassword: state.confirmPassword,
     };
-    try {
-      const res = await Axios.post('/api/v1/auth/signup', userData);
-
-      console.log(res.data);
-      localStorage.setItem('token', res.data.token);
+    if (isSubmit) {
+      dispatch(signUpUser(userData));
       setstate({
         ...state,
-        loading: false,
         isSubmit: false,
       });
-      router.push('/');
-    } catch (error) {
-      setstate({
-        ...state,
-        error: error.response.data,
-        loading: false,
-        isSubmit: false,
-      });
-      console.error(error);
     }
-  };
+    if (error) {
+      setstate({
+        ...state,
+        error: error,
+        isSubmit: false,
+      });
+    }
+  }, [isSubmit, error]);
 
   const handelSubmit = async (e) => {
     e.preventDefault();
     setstate({
       ...state,
-      loading: true,
       isSubmit: true,
     });
   };
@@ -139,9 +135,9 @@ function signup({ classes }) {
               type='submit'
               color='primary'
               variant='contained'
-              disabled={state.loading}
+              disabled={loading}
               className={classes.button}>
-              {state.loading ? <CircularProgress /> : 'Signup'}
+              {loading ? <CircularProgress /> : 'Signup'}
             </Button>
             <br />
             <small>

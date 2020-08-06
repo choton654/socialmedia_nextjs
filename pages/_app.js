@@ -1,6 +1,10 @@
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/core/styles';
+import Axios from 'axios';
+import App from 'next/app';
 import Head from 'next/head';
+import Router from 'next/router';
+import { destroyCookie, parseCookies } from 'nookies';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Navbar from '../components/Navbar';
@@ -29,7 +33,7 @@ function MyApp(props) {
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
-        <Navbar />
+        <Navbar {...pageProps} />
         <Component {...pageProps} />
       </ThemeProvider>
     </React.Fragment>
@@ -39,6 +43,46 @@ function MyApp(props) {
 MyApp.propTypes = {
   Component: PropTypes.elementType.isRequired,
   pageProps: PropTypes.object.isRequired,
+};
+
+MyApp.getInitialProps = async (appContext) => {
+  // calls page's `getInitialProps` and fills `appProps.pageProps`
+  const { ctx } = appContext;
+  const appProps = await App.getInitialProps(appContext);
+  const { token } = parseCookies(ctx);
+
+  const redirectUser = (ctx, location) => {
+    if (ctx.req) {
+      ctx.res.writeHead(302, { Location: location });
+      ctx.res.end();
+    } else {
+      Router.push(location);
+    }
+  };
+
+  if (!token) {
+    const protectRoute = ctx.pathname === '/';
+    if (protectRoute) {
+      redirectUser(ctx, '/login');
+    }
+  } else {
+    try {
+      const { data } = await Axios.get('http://localhost:3000/api/v1/user', {
+        headers: { Authorization: token },
+      });
+      appProps.pageProps.user = data;
+      console.log(appProps.pageProps);
+    } catch (error) {
+      console.error(error);
+      // throw out invalid token
+      destroyCookie(ctx, token);
+
+      // redirect to login
+      redirectUser(ctx, '/login');
+    }
+  }
+
+  return { ...appProps };
 };
 
 export default wrapper.withRedux(MyApp);

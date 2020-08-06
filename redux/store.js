@@ -1,13 +1,12 @@
 import { createWrapper } from 'next-redux-wrapper';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import dataReducers from './reducers/dataReducers';
 import uiReducers from './reducers/uiReducers';
 import userReducers from './reducers/userReducers';
 
 const rootreducers = combineReducers({
   user: userReducers,
-  data: dataReducers,
+  // data: dataReducers,
   UI: uiReducers,
 });
 

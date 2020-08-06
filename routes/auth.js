@@ -41,7 +41,7 @@ router
         expiresIn: '7d',
       });
 
-      res.status(200).json({ token });
+      res.status(200).json(token);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: error.code });
@@ -81,7 +81,7 @@ router
         });
 
         // send token to client
-        res.status(200).json({ token });
+        res.status(200).json(token);
       } else {
         res.status(401).json({ error: 'Wrong Credentials' });
       }
