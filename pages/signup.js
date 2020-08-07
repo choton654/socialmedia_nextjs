@@ -9,9 +9,8 @@ import {
 } from '@material-ui/core';
 import GavelIcon from '@material-ui/icons/Gavel';
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { signUpUser } from '../redux/actions/userActions';
-function signup({ classes }) {
+import { UserState } from '../context/context/userContext';
+function Signup({ classes }) {
   const initialState = {
     name: '',
     email: '',
@@ -23,16 +22,10 @@ function signup({ classes }) {
 
   const [state, setstate] = useState(initialState);
 
-  const dispatch = useDispatch();
-
-  const store = useSelector((state) => {
-    return {
-      user: state.user,
-      UI: state.UI,
-    };
-  });
-
-  const { loading, error } = store.UI;
+  const {
+    signUpUser,
+    state: { loading, error },
+  } = UserState();
 
   const { isSubmit } = state;
   useEffect(() => {
@@ -43,7 +36,7 @@ function signup({ classes }) {
       confirmPassword: state.confirmPassword,
     };
     if (isSubmit) {
-      dispatch(signUpUser(userData));
+      signUpUser(userData);
       setstate({
         ...state,
         isSubmit: false,
@@ -174,4 +167,4 @@ const styles = (theme) => ({
   },
 });
 
-export default withStyles(styles)(signup);
+export default withStyles(styles)(Signup);

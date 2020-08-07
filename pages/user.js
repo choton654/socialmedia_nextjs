@@ -1,11 +1,19 @@
+import { withStyles } from '@material-ui/core';
 import React from 'react';
 
-function user() {
+function User({ classes }) {
   return (
-    <div>
-      <h1>from user</h1>
-    </div>
+    <main className={classes.root}>
+      <h1>from User</h1>
+    </main>
   );
 }
 
-export default user;
+const styles = (theme) => ({
+  root: {
+    maxWidth: '1200px',
+    margin: '80px auto 0 auto',
+  },
+});
+
+export default withStyles(styles)(User);

@@ -3,7 +3,8 @@ import Grid from '@material-ui/core/Grid';
 import Axios from 'axios';
 import React, { useState } from 'react';
 import Post from '../components/Post';
-function index({ classes, posts }) {
+import Profile from '../components/Profile';
+function Index({ classes, posts, user }) {
   const initialState = {};
 
   const [state, setstate] = useState(initialState);
@@ -21,12 +22,19 @@ function index({ classes, posts }) {
           {recentPostMarkup}
         </Grid>
         <Grid item sm={4} xs={12}>
-          <p color='primary'>Profile</p>
+          <Profile user={user} />
         </Grid>
       </Grid>
     </main>
   );
 }
+
+Index.getInitialProps = async () => {
+  let posts = [];
+  const res = await Axios.get('http://localhost:3000/api/v1/post');
+  posts = res.data;
+  return { posts };
+};
 
 const styles = (theme) => ({
   root: {
@@ -35,11 +43,4 @@ const styles = (theme) => ({
   },
 });
 
-index.getInitialProps = async () => {
-  let posts = [];
-  const res = await Axios.get('http://localhost:3000/api/v1/post');
-  posts = res.data;
-  return { posts };
-};
-
-export default withStyles(styles)(index);
+export default withStyles(styles)(Index);

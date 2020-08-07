@@ -4,15 +4,17 @@ import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import Link from 'next/link';
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { logOutUser } from '../redux/actions/userActions';
-
+import { UserState } from '../context/context/userContext';
 function Navbar({ classes, user }) {
-  const dispatch = useDispatch();
-
+  const { logOutUser } = UserState();
   return (
     <AppBar className={classes.appBar}>
       <Toolbar className={classes.toolbarTitle}>
+        <Button color='inherit'>
+          <Link href='/'>
+            <a className={classes.icon}>Home</a>
+          </Link>
+        </Button>
         {!user ? (
           <>
             <Button color='inherit'>
@@ -28,17 +30,10 @@ function Navbar({ classes, user }) {
           </>
         ) : (
           <>
-            <Button color='inherit'>
-              <Link href='/'>
-                <a className={classes.icon}>Home</a>
-              </Link>
-            </Button>
             <Button
               color='inherit'
               className={classes.icon}
-              onClick={() => {
-                dispatch(logOutUser());
-              }}>
+              onClick={() => logOutUser()}>
               Logout
             </Button>
           </>

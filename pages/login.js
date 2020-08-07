@@ -9,10 +9,8 @@ import {
 } from '@material-ui/core';
 import Lock from '@material-ui/icons/Lock';
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { logInUser } from '../redux/actions/userActions';
-
-function login({ classes }) {
+import { UserState } from '../context/context/userContext';
+function Login({ classes }) {
   const initialState = {
     email: '',
     password: '',
@@ -22,16 +20,10 @@ function login({ classes }) {
 
   const [state, setstate] = useState(initialState);
 
-  const dispatch = useDispatch();
-
-  const store = useSelector((state) => {
-    return {
-      user: state.user,
-      UI: state.UI,
-    };
-  });
-
-  const { loading, error } = store.UI;
+  const {
+    logInUser,
+    state: { loading, error },
+  } = UserState();
 
   const { isSubmit } = state;
   useEffect(() => {
@@ -40,7 +32,7 @@ function login({ classes }) {
       password: state.password,
     };
     if (isSubmit) {
-      dispatch(logInUser(userData));
+      logInUser(userData);
       setstate({
         ...state,
         isSubmit: false,
@@ -114,7 +106,7 @@ function login({ classes }) {
             </Button>
             <br />
             <small>
-              don't have an account? <Link href='/signup'>signup</Link>
+              do not have an account? <Link href='/signup'>signup</Link>
             </small>
           </form>
         </Grid>
@@ -147,4 +139,4 @@ const styles = (theme) => ({
   },
 });
 
-export default withStyles(styles)(login);
+export default withStyles(styles)(Login);
