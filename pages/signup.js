@@ -8,8 +8,10 @@ import {
   withStyles,
 } from '@material-ui/core';
 import GavelIcon from '@material-ui/icons/Gavel';
+import Axios from 'axios';
+import cookie from 'js-cookie';
+import router from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { UserState } from '../context/context/userContext';
 function Signup({ classes }) {
   const initialState = {
     name: '',
@@ -18,14 +20,10 @@ function Signup({ classes }) {
     confirmPassword: '',
     error: null,
     isSubmit: false,
+    loading: false,
   };
 
   const [state, setstate] = useState(initialState);
-
-  const {
-    signUpUser,
-    state: { loading, error },
-  } = UserState();
 
   const { isSubmit } = state;
   useEffect(() => {
@@ -37,19 +35,32 @@ function Signup({ classes }) {
     };
     if (isSubmit) {
       signUpUser(userData);
+    }
+  }, [isSubmit]);
+
+  const signUpUser = async (userData) => {
+    setstate({ ...state, loading: true });
+    try {
+      const res = await Axios.post('/api/v1/auth/signup', userData);
+
+      console.log(res.data);
+      cookie.set('token', res.data);
+      Axios.defaults.headers.common['Authorization'] = res.data;
+
+      setstate({ ...state, loading: false, error: null, isSubmit: false });
+
+      router.push('/');
+    } catch (error) {
       setstate({
         ...state,
+        loading: false,
+        error: error.response.data,
         isSubmit: false,
       });
+
+      console.error(error);
     }
-    if (error) {
-      setstate({
-        ...state,
-        error: error,
-        isSubmit: false,
-      });
-    }
-  }, [isSubmit, error]);
+  };
 
   const handelSubmit = async (e) => {
     e.preventDefault();
@@ -128,9 +139,9 @@ function Signup({ classes }) {
               type='submit'
               color='primary'
               variant='contained'
-              disabled={loading}
+              disabled={state.loading}
               className={classes.button}>
-              {loading ? <CircularProgress /> : 'Signup'}
+              {state.loading ? <CircularProgress /> : 'Signup'}
             </Button>
             <br />
             <small>

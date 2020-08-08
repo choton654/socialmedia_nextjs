@@ -14,14 +14,9 @@ import LinkIcon from '@material-ui/icons/Link';
 import LocationOn from '@material-ui/icons/LocationOn';
 import dayjs from 'dayjs';
 import React from 'react';
-import { UserState } from '../context/context/userContext';
+import EditDetails from './EditDetails';
 
-function Profile({ classes, user }) {
-  const {
-    state: { authenticated },
-  } = UserState();
-
-  const { uploadImage } = UserState();
+function Profile({ classes, user, uploadImage, editUserDetails }) {
   console.log(user);
   let formData;
   const handleImageChange = (e) => {
@@ -108,10 +103,8 @@ function Profile({ classes, user }) {
                 Joined {dayjs(user.credential.createdAt).format('MMM YYYY')}
               </span>
             </div>
-            {/* <MyButton tip='Logout' onClick={this.handleLogout}>
-              <KeyboardReturn color='primary' />
-            </MyButton>
-            <EditDetails /> */}
+
+            <EditDetails user={user} editUserDetails={editUserDetails} />
           </div>
         </Paper>
       ) : (

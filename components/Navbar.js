@@ -2,11 +2,22 @@ import { withStyles } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
+import Axios from 'axios';
+import cookie from 'js-cookie';
 import Link from 'next/link';
+import router from 'next/router';
 import React from 'react';
-import { UserState } from '../context/context/userContext';
+// import { logOutUser } from '../context/context/userContext';
 function Navbar({ classes, user }) {
-  const { logOutUser } = UserState();
+  // const { logOutUser } = UserState();
+  const logOutUser = () => {
+    cookie.remove('token');
+    delete Axios.defaults.headers.common['Authorization'];
+    window.localStorage.setItem('logout', Date.now());
+    // dispatch({ type: SET_UNAUTHENTICATED });
+    router.push('/login');
+  };
+
   return (
     <AppBar className={classes.appBar}>
       <Toolbar className={classes.toolbarTitle}>

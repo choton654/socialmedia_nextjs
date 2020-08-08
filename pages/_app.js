@@ -8,7 +8,6 @@ import { destroyCookie, parseCookies } from 'nookies';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Navbar from '../components/Navbar';
-import { UserProvider } from '../context/context/userContext';
 import theme from '../src/theme';
 function MyApp(props) {
   const { Component, pageProps } = props;
@@ -33,10 +32,9 @@ function MyApp(props) {
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
-        <UserProvider>
-          <Navbar {...pageProps} />
-          <Component {...pageProps} />
-        </UserProvider>
+
+        <Navbar {...pageProps} />
+        <Component {...pageProps} />
       </ThemeProvider>
     </React.Fragment>
   );

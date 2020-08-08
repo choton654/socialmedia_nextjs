@@ -8,22 +8,20 @@ import {
   withStyles,
 } from '@material-ui/core';
 import Lock from '@material-ui/icons/Lock';
+import Axios from 'axios';
+import cookie from 'js-cookie';
+import router from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { UserState } from '../context/context/userContext';
 function Login({ classes }) {
   const initialState = {
     email: '',
     password: '',
     error: null,
     isSubmit: false,
+    loading: false,
   };
 
   const [state, setstate] = useState(initialState);
-
-  const {
-    logInUser,
-    state: { loading, error },
-  } = UserState();
 
   const { isSubmit } = state;
   useEffect(() => {
@@ -33,19 +31,32 @@ function Login({ classes }) {
     };
     if (isSubmit) {
       logInUser(userData);
+    }
+  }, [isSubmit]);
+
+  const logInUser = async (userData) => {
+    setstate({ ...state, loading: true });
+
+    try {
+      // const res = useSWR('/api/v1/auth/login', fetcher);
+      // const fetcher = (url) => Axios.post(url, userData);
+      const res = await Axios.post('/api/v1/auth/login', userData);
+
+      cookie.set('token', res.data);
+      Axios.defaults.headers.common['Authorization'] = res.data;
+
+      setstate({ ...state, loading: false, error: null, isSubmit: false });
+      router.push('/');
+    } catch (error) {
       setstate({
         ...state,
+        loading: false,
+        error: error.response.data,
         isSubmit: false,
       });
+      console.error(error);
     }
-    if (error) {
-      setstate({
-        ...state,
-        error: error,
-        isSubmit: false,
-      });
-    }
-  }, [isSubmit, error]);
+  };
 
   const handelSubmit = async (e) => {
     e.preventDefault();
@@ -100,9 +111,9 @@ function Login({ classes }) {
               type='submit'
               color='primary'
               variant='contained'
-              disabled={loading}
+              disabled={state.loading}
               className={classes.button}>
-              {loading ? <CircularProgress /> : 'Login'}
+              {state.loading ? <CircularProgress /> : 'Login'}
             </Button>
             <br />
             <small>
