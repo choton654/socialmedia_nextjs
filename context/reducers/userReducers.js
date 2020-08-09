@@ -1,5 +1,6 @@
 import {
   CLEAR_ERRORS,
+  LIKE_UNLIKE_POST,
   LOADING_UI,
   LOADING_USER,
   SET_AUTHENTICATED,
@@ -58,6 +59,25 @@ export default function userReducers(state, action) {
         loading: false,
         error: null,
       };
+    case LIKE_UNLIKE_POST:
+      return {
+        ...state,
+        likes: state.likes.map((l) =>
+          l.postId === action.payload._id
+            ? null
+            : { postId: action.payload._id, user: action.payload.user },
+        ),
+      };
+    // return {
+    //   ...state,
+    //   likes: [
+    //     ...state.likes,
+    //     {
+    //       user: state.credential._id,
+    //       postId: action.payload._id,
+    //     },
+    //   ],
+    // };
     default:
       return state;
   }

@@ -106,38 +106,8 @@ router
     }
   })
 
-  // like a post
-  .put('/:postId/like', authUser, async (req, res) => {
-    const { postId } = req.params;
-    try {
-      const post = await Post.findOne({ _id: postId });
-
-      if (!post) {
-        return res.status(404).json({ msg: 'no post found' });
-      }
-
-      const like = await Like.findOne({ user: req.user._id, postId });
-
-      if (like) {
-        return res.status(400).json({ msg: 'already liked this post' });
-      } else {
-        await new Like({
-          postId,
-          user: req.user._id,
-        }).save();
-      }
-
-      const likedPost = await Post.findOne({ _id: postId }).populate('likes');
-
-      res.status(200).json({ likedPost });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: error.code });
-    }
-  })
-
-  // unlike a post
-  .delete('/:postId/unlike', authUser, async (req, res) => {
+  // like or unlike post
+  .put('/:postId/like-unlike', authUser, async (req, res) => {
     const { postId } = req.params;
     try {
       const post = await Post.findOne({ _id: postId });
@@ -151,12 +121,15 @@ router
       if (like) {
         await like.remove();
       } else {
-        return res.status(400).json({ msg: 'not like this post' });
+        await new Like({
+          postId,
+          user: req.user._id,
+        }).save();
       }
 
       const likedPost = await Post.findOne({ _id: postId }).populate('likes');
 
-      res.status(200).json({ likedPost });
+      res.status(200).json(likedPost);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: error.code });

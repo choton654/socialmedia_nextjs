@@ -36,7 +36,7 @@ export const UserProvider = ({ children }) => {
       const res = await Axios.post('/api/v1/auth/login', userData);
 
       cookie.set('token', res.data);
-      Axios.defaults.headers.common['Authorization'] = res.data;
+      // Axios.defaults.headers.common['Authorization'] = res.data;
       dispatch({ type: SET_AUTHENTICATED });
       dispatch({ type: CLEAR_ERRORS });
       router.push('/');
@@ -54,7 +54,7 @@ export const UserProvider = ({ children }) => {
 
       console.log(res.data);
       cookie.set('token', res.data);
-      Axios.defaults.headers.common['Authorization'] = res.data;
+      // Axios.defaults.headers.common['Authorization'] = res.data;
       dispatch({ type: SET_AUTHENTICATED });
       dispatch({ type: CLEAR_ERRORS });
       router.push('/');
@@ -66,7 +66,7 @@ export const UserProvider = ({ children }) => {
 
   const logOutUser = () => {
     cookie.remove('token');
-    delete Axios.defaults.headers.common['Authorization'];
+    // delete Axios.defaults.headers.common['Authorization'];
     window.localStorage.setItem('logout', Date.now());
     dispatch({ type: SET_UNAUTHENTICATED });
     router.push('/login');
@@ -80,7 +80,7 @@ export const UserProvider = ({ children }) => {
         headers: { Authorization: token },
       });
       dispatch({ type: SET_CURRENT_USER, payload: res.data.data });
-      router.reload();
+      // router.reload();
     } catch (error) {
       console.error(error);
     }

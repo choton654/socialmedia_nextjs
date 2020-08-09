@@ -13,16 +13,12 @@ import EditIcon from '@material-ui/icons/Edit';
 import LinkIcon from '@material-ui/icons/Link';
 import LocationOn from '@material-ui/icons/LocationOn';
 import dayjs from 'dayjs';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { UserState } from '../context/context/userContext';
 import EditDetails from './EditDetails';
 
 function Profile({ classes, user }) {
-  console.log(user);
-
   const {
-    getUserData,
-    loadUser,
     editUserDetails,
     uploadImage,
     state: {
@@ -31,12 +27,6 @@ function Profile({ classes, user }) {
       credential: { avatar, name, bio, location, website, createdAt },
     },
   } = UserState();
-
-  useEffect(() => {
-    if (user) {
-      loadUser(user);
-    }
-  }, [user]);
 
   const handleImageChange = (e) => {
     const image = e.target.files[0];

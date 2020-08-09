@@ -9,3 +9,7 @@ export const LOADING_UI = 'LOADING_UI';
 export const CLEAR_ERRORS = 'CLEAR_ERRORS';
 
 // data reducer types
+export const LOADING_DATA = 'LOADING_DATA';
+export const SET_POSTS = 'SET_POSTS';
+export const SET_POST = 'SET_POST';
+export const LIKE_UNLIKE_POST = 'LIKE_UNLIKE_POST';

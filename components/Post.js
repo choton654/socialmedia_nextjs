@@ -1,18 +1,24 @@
+import { CardMedia } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
 import { withStyles } from '@material-ui/core/styles';
+import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
+import ChatIcon from '@material-ui/icons/Chat';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Link from 'next/link';
 import React from 'react';
+import { DataState } from '../context/context/dataContext';
 
 function Post({
   classes,
+  state: { likes: userLikes, authenticated },
   post: {
     title,
-    user: { avatar, name },
+    user: { avatar, name, _id },
     comments,
     likes,
     id,
@@ -20,6 +26,15 @@ function Post({
   },
 }) {
   dayjs.extend(relativeTime);
+  const { likeUnlikePosts } = DataState();
+
+  const likedPost = () => {
+    if (userLikes && userLikes.find((like) => like.postId === id)) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   return (
     <Card className={classes.card}>
@@ -44,6 +59,28 @@ function Post({
         </Typography>
         <Typography variant='body1'>{title}</Typography>
       </CardContent>
+      {!authenticated ? (
+        <Link href='/login'>
+          <a>
+            <Tooltip title='Like'>
+              <FavoriteBorderIcon color='primary' />
+            </Tooltip>
+          </a>
+        </Link>
+      ) : likedPost() ? (
+        <Tooltip title='Undo like' onClick={() => likeUnlikePosts(id)}>
+          <FavoriteIcon color='primary' />
+        </Tooltip>
+      ) : (
+        <Tooltip title='Like' onClick={() => likeUnlikePosts(id)}>
+          <FavoriteBorderIcon color='primary' />
+        </Tooltip>
+      )}
+      <span>{likes} Likes</span>
+      <Tooltip title='Comments'>
+        <ChatIcon color='primary' />
+      </Tooltip>
+      <span>{comments} Comments</span>
     </Card>
   );
 }
