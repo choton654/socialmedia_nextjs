@@ -1,26 +1,26 @@
-import { IconButton, Tooltip, withStyles } from '@material-ui/core';
+import { withStyles } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
-// Icons
-import EditIcon from '@material-ui/icons/Edit';
 import React, { useEffect, useState } from 'react';
+import { UserState } from '../context/context/userContext';
 function EditDetails({ user, classes, editUserDetails }) {
   const [state, setstate] = useState({
     bio: '',
+    name: '',
     location: '',
     website: '',
     open: false,
   });
 
   const handleOpen = () => {
-    const { credential } = user;
     setstate({
       ...state,
       bio: credential.bio ? credential.bio : '',
+      name: credential.name ? credential.name : '',
       website: credential.website ? credential.website : '',
       location: credential.location ? credential.location : '',
       open: true,
@@ -29,11 +29,16 @@ function EditDetails({ user, classes, editUserDetails }) {
   const handleClose = () => {
     setstate({ ...state, open: false });
   };
+
+  const {
+    state: { credential },
+  } = UserState();
+
   useEffect(() => {
-    const { credential } = user;
     setstate({
       ...state,
       bio: credential.bio ? credential.bio : '',
+      name: credential.name ? credential.name : '',
       website: credential.website ? credential.website : '',
       location: credential.location ? credential.location : '',
     });
@@ -47,6 +52,7 @@ function EditDetails({ user, classes, editUserDetails }) {
   };
   const handleSubmit = () => {
     const userDetails = {
+      name: state.name,
       bio: state.bio,
       website: state.website,
       location: state.location,
@@ -57,15 +63,23 @@ function EditDetails({ user, classes, editUserDetails }) {
 
   return (
     <>
-      <Tooltip title='Edit Details' placeholder='top'>
-        <IconButton onClick={handleOpen}>
-          <EditIcon color='primary' />
-        </IconButton>
-      </Tooltip>
+      <Button variant='contained' color='primary' onClick={handleOpen}>
+        Edit
+      </Button>
       <Dialog open={state.open} onClose={handleClose} fullWidth maxWidth='sm'>
         <DialogTitle>Edit your details</DialogTitle>
         <DialogContent>
           <form>
+            <TextField
+              name='name'
+              tpye='text'
+              label='name'
+              placeholder='Your name'
+              className={classes.textField}
+              value={state.name}
+              onChange={handleChange}
+              fullWidth
+            />
             <TextField
               name='bio'
               tpye='text'
@@ -119,6 +133,7 @@ const styles = (theme) => ({
   },
   button: {
     marginTop: 20,
+    margin: 'auto',
   },
 });
 

@@ -1,5 +1,5 @@
 import {
-  Button,
+  CircularProgress,
   IconButton,
   Link,
   Paper,
@@ -13,120 +13,107 @@ import EditIcon from '@material-ui/icons/Edit';
 import LinkIcon from '@material-ui/icons/Link';
 import LocationOn from '@material-ui/icons/LocationOn';
 import dayjs from 'dayjs';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { UserState } from '../context/context/userContext';
 import EditDetails from './EditDetails';
 
-function Profile({ classes, user, uploadImage, editUserDetails }) {
+function Profile({ classes, user }) {
   console.log(user);
-  let formData;
+
+  const {
+    getUserData,
+    loadUser,
+    editUserDetails,
+    uploadImage,
+    state: {
+      authenticated,
+      loading,
+      credential: { avatar, name, bio, location, website, createdAt },
+    },
+  } = UserState();
+
+  useEffect(() => {
+    if (user) {
+      loadUser(user);
+    }
+  }, [user]);
+
   const handleImageChange = (e) => {
     const image = e.target.files[0];
-    formData = new FormData();
+    const formData = new FormData();
     formData.append('file', image, image.name);
     uploadImage(formData);
   };
-  // const token = cookie.get('token');
-  // const { data } = useSWR('/api/v1/user/image', (url) =>
-  //   Axios({
-  //     method: 'put',
-  //     url: url,
-  //     data: formData,
-  //     headers: { Authorization: token },
-  //   })
-  //     .then((r) => r.data)
-  //     .catch((err) => console.error(err)),
-  // );
-  // console.log(data);
 
   const handleEditPicture = () => {
     const imageInput = document.getElementById('imageInput');
     imageInput.click();
   };
 
-  return (
-    <div>
-      {user ? (
-        <Paper className={classes.paper}>
-          <div className={classes.profile}>
-            <div className='image-wrapper'>
-              <img
-                src={user.credential.avatar}
-                alt='avatar'
-                className='profile-image'
-              />
-              <input
-                type='file'
-                id='imageInput'
-                hidden='hidden'
-                onChange={handleImageChange}
-              />
-              <Tooltip title='Edit profile picture' placement='top'>
-                <IconButton onClick={handleEditPicture}>
-                  <EditIcon color='primary' />
-                </IconButton>
-              </Tooltip>
-            </div>
+  return !loading ? (
+    authenticated ? (
+      <Paper className={classes.paper}>
+        <div className={classes.profile}>
+          <div className='image-wrapper'>
+            <img src={avatar} alt='avatar' className='profile-image' />
+            <input
+              type='file'
+              id='imageInput'
+              hidden='hidden'
+              onChange={handleImageChange}
+            />
+            <Tooltip title='Edit profile picture' placement='top'>
+              <IconButton onClick={handleEditPicture}>
+                <EditIcon color='primary' />
+              </IconButton>
+            </Tooltip>
+          </div>
+          <hr />
+          <div className='profile-details'>
+            <Link href={`/user/${name}`}>
+              <MuiLink variant='h5' color='primary'>
+                @{name}
+              </MuiLink>
+            </Link>
             <hr />
-            <div className='profile-details'>
-              <Link href={`/user/${user.credential.name}`}>
-                <MuiLink variant='h5' color='primary'>
-                  @{user.credential.name}
-                </MuiLink>
-              </Link>
-              <hr />
-              {user.credential.bio && (
-                <Typography variant='body2'>{user.credential.bio}</Typography>
-              )}
-              <hr />
-              {user.credential.location && (
-                <>
-                  <LocationOn color='primary' />{' '}
-                  <span>{user.credential.location}</span>
-                  <hr />
-                </>
-              )}
-              {user.credential.website && (
-                <>
-                  <LinkIcon color='primary' />
-                  <a
-                    href={user.credential.website}
-                    target='_blank'
-                    rel='noopener noreferrer'>
-                    {' '}
-                    {user.credential.website}
-                  </a>
-                  <hr />
-                </>
-              )}
-              <CalendarToday color='primary' />{' '}
-              <span>
-                Joined {dayjs(user.credential.createdAt).format('MMM YYYY')}
-              </span>
-            </div>
+            {bio && <Typography variant='body2'>{bio}</Typography>}
+            <hr />
+            {location && (
+              <>
+                <LocationOn color='primary' /> <span>{location}</span>
+                <hr />
+              </>
+            )}
+            {website && (
+              <>
+                <LinkIcon color='primary' />
+                <a href={website} target='_blank' rel='noopener noreferrer'>
+                  {' '}
+                  {website}
+                </a>
+                <hr />
+              </>
+            )}
+            <CalendarToday color='primary' />{' '}
+            <span>Joined {dayjs(createdAt).format('MMM YYYY')}</span>
+          </div>
 
-            <EditDetails user={user} editUserDetails={editUserDetails} />
-          </div>
-        </Paper>
-      ) : (
-        <Paper className={classes.paper}>
-          <Typography variant='body2' align='center'>
-            No profile found, please login again
-          </Typography>
-          <div className={classes.buttons}>
-            <Link href='/login'>
-              <Button variant='contained' color='primary'>
-                <a>LogIn</a>
-              </Button>
-            </Link>
-            <Link href='/signup'>
-              <Button variant='contained' color='secondary'>
-                <a>SignUp</a>
-              </Button>
-            </Link>
-          </div>
-        </Paper>
-      )}
-    </div>
+          <EditDetails
+            className={classes.buttons}
+            user={user}
+            editUserDetails={editUserDetails}
+          />
+        </div>
+      </Paper>
+    ) : (
+      <Paper className={classes.paper}>
+        <Typography variant='body1' align='center'>
+          No profile found, please login again
+        </Typography>
+      </Paper>
+    )
+  ) : (
+    <CircularProgress color='secondary' />
   );
 }
 

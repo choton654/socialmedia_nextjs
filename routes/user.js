@@ -108,8 +108,9 @@ router
   // add user details
   .put('/', authUser, async (req, res) => {
     let userDetails = {};
-    const { bio, website, location } = req.body;
+    const { bio, website, location, name } = req.body;
     try {
+      if (!isEmpty(name.trim())) userDetails.name = name;
       if (!isEmpty(bio.trim())) userDetails.bio = bio;
       if (!isEmpty(website.trim())) {
         // https://website.com
@@ -156,27 +157,24 @@ router
 
     file.name = `photo_${req.user._id}${path.parse(file.name).ext}`;
 
-    file.mv(
-      `./public/static/uploads/${req.user.name}-${file.name}`,
-      async (err) => {
-        if (err) {
-          console.log(err);
-          return res.status(500).json({
-            success: false,
-            err: 'problem with file upload',
-          });
-        }
+    file.mv(`./public/static/uploads/${file.name}`, async (err) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          success: false,
+          err: 'problem with file upload',
+        });
+      }
 
-        const updatedUser = await User.findOneAndUpdate(
-          { _id: req.user._id },
-          { avatar: `/static/uploads/${req.user.name}-${file.name}` },
-          { new: true },
-        );
-        res
-          .status(200)
-          .json({ msg: 'image uploaded successfully', data: updatedUser });
-      },
-    );
+      const updatedUser = await User.findOneAndUpdate(
+        { _id: req.user._id },
+        { avatar: `/static/uploads/${file.name}` },
+        { new: true },
+      );
+      res
+        .status(200)
+        .json({ msg: 'image uploaded successfully', data: updatedUser });
+    });
   })
 
   // mark notifications read

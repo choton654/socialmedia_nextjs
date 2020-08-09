@@ -8,6 +8,7 @@ import { destroyCookie, parseCookies } from 'nookies';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Navbar from '../components/Navbar';
+import { UserProvider } from '../context/context/userContext';
 import theme from '../src/theme';
 function MyApp(props) {
   const { Component, pageProps } = props;
@@ -32,9 +33,10 @@ function MyApp(props) {
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
-
-        <Navbar {...pageProps} />
-        <Component {...pageProps} />
+        <UserProvider>
+          <Navbar {...pageProps} />
+          <Component {...pageProps} />
+        </UserProvider>
       </ThemeProvider>
     </React.Fragment>
   );
@@ -48,7 +50,7 @@ MyApp.propTypes = {
 MyApp.getInitialProps = async (appContext) => {
   // calls page's `getInitialProps` and fills `appProps.pageProps`
   const { ctx } = appContext;
-  // console.log(ctx);
+
   const appProps = await App.getInitialProps(appContext);
 
   const { token } = parseCookies(ctx);
