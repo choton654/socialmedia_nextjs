@@ -2,9 +2,9 @@ const jwt = require('jsonwebtoken');
 const User = require('../model/User');
 const Router = require('next/router');
 exports.authUser = async (req, res, next) => {
-  // if (!req.headers.authorization) {
-  //   return res.status(404).json({ error: 'Unauthorized' });
-  // }
+  if (!req.headers.authorization) {
+    return res.status(404).json({ error: 'Unauthorized' });
+  }
   try {
     const { userId } = jwt.verify(
       req.headers.authorization,

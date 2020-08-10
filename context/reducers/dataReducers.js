@@ -1,4 +1,13 @@
-import { LIKE_UNLIKE_POST, LOADING_DATA, SET_POSTS } from '../types';
+import {
+  ADD_POST,
+  CLEAR_ERROR,
+  DELETE_POSTS,
+  ERRORS,
+  LIKE_UNLIKE_POST,
+  LOADING,
+  LOADING_DATA,
+  SET_POSTS,
+} from '../types';
 
 export default function dataReducers(state, action) {
   switch (action.type) {
@@ -21,7 +30,33 @@ export default function dataReducers(state, action) {
       return {
         ...state,
       };
-
+    case DELETE_POSTS:
+      return {
+        ...state,
+        posts: state.posts.filter((post) => post._id !== action.payload),
+      };
+    case ADD_POST:
+      return {
+        ...state,
+        posts: [...state.posts, action.payload],
+      };
+    case LOADING:
+      return {
+        ...state,
+        loading: true,
+      };
+    case ERRORS:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+    case CLEAR_ERROR:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+      };
     default:
       return state;
   }

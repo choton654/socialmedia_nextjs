@@ -4,6 +4,7 @@ const Like = require('../model/Like');
 const { authUser } = require('../utils/authUser');
 const Comment = require('../model/Comment');
 const Notification = require('../model/Notification');
+const { default: isEmpty } = require('validator/lib/isempty');
 
 router
 
@@ -157,13 +158,20 @@ router
   // create a post
   .post('/', authUser, async (req, res) => {
     req.body.user = req.user;
-
-    const post = await Post.create(req.body);
-    if (!post) {
-      return res.status(404).json({ error: 'no post created' });
+    if (isEmpty(req.body.title)) {
+      return res.status(400).json({ msg: 'title is required' });
     }
+    try {
+      const post = await Post.create(req.body);
+      if (!post) {
+        return res.status(404).json({ error: 'no post created' });
+      }
 
-    res.status(200).json(post);
+      res.status(200).json(post);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: error.code });
+    }
   });
 
 module.exports = router;

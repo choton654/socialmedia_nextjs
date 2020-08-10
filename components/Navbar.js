@@ -5,6 +5,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Link from 'next/link';
 import React from 'react';
 import { UserState } from '../context/context/userContext';
+import AddPost from './AddPost';
 function Navbar({ classes, user }) {
   const {
     logOutUser,
@@ -28,9 +29,7 @@ function Navbar({ classes, user }) {
           </>
         ) : (
           <>
-            <Link href='/'>
-              <a className={classes.icon}>Create</a>
-            </Link>
+            <AddPost />
             <Button color='inherit' className={classes.icon}>
               Notifications
             </Button>

@@ -7,22 +7,24 @@ import Profile from '../components/Profile';
 import { DataState } from '../context/context/dataContext';
 import { UserState } from '../context/context/userContext';
 function Index({ classes, posts, user }) {
-  const { loadUser, state } = UserState();
+  const { loadUser } = UserState();
   const {
     loadPosts,
     state: { posts: statePosts },
   } = DataState();
 
   useEffect(() => {
-    loadUser(user);
-    loadPosts(posts);
+    if (user) {
+      loadUser(user);
+    }
+    if (posts) {
+      loadPosts(posts);
+    }
   }, [user, posts]);
 
   let recentPostMarkup =
     statePosts.length !== 0 ? (
-      statePosts.map((post) => (
-        <Post key={post._id} post={post} state={state} />
-      ))
+      statePosts.map((post) => <Post key={post._id} post={post} />)
     ) : (
       <p>loading...</p>
     );

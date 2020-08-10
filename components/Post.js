@@ -11,11 +11,11 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Link from 'next/link';
 import React from 'react';
+import DeletePost from '../components/DeletePost';
 import { DataState } from '../context/context/dataContext';
-
+import { UserState } from '../context/context/userContext';
 function Post({
   classes,
-  state: { likes: userLikes, authenticated },
   post: {
     title,
     user: { avatar, name, _id },
@@ -26,15 +26,24 @@ function Post({
   },
 }) {
   dayjs.extend(relativeTime);
-  const { likeUnlikePosts } = DataState();
+  const { likeUnlikePosts, deletePost } = DataState();
+  const {
+    state: {
+      authenticated,
+      likes: userLikes,
+      credential: { _id: userId },
+    },
+  } = UserState();
 
   const likedPost = () => {
-    if (userLikes && userLikes.find((like) => like.postId === id)) {
+    if (userLikes && userLikes.find((like) => like?.postId === id)) {
       return true;
     } else {
       return false;
     }
   };
+
+  const isDelete = authenticated && _id === userId;
 
   return (
     <Card className={classes.card}>
@@ -68,11 +77,19 @@ function Post({
           </a>
         </Link>
       ) : likedPost() ? (
-        <Tooltip title='Undo like' onClick={() => likeUnlikePosts(id)}>
+        <Tooltip
+          title='Undo like'
+          onClick={() => {
+            likeUnlikePosts(id);
+          }}>
           <FavoriteIcon color='primary' />
         </Tooltip>
       ) : (
-        <Tooltip title='Like' onClick={() => likeUnlikePosts(id)}>
+        <Tooltip
+          title='Like'
+          onClick={() => {
+            likeUnlikePosts(id);
+          }}>
           <FavoriteBorderIcon color='primary' />
         </Tooltip>
       )}
@@ -81,6 +98,7 @@ function Post({
         <ChatIcon color='primary' />
       </Tooltip>
       <span>{comments} Comments</span>
+      {isDelete && <DeletePost id={id} />}
     </Card>
   );
 }

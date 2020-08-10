@@ -2,7 +2,15 @@ import Axios from 'axios';
 import cookie from 'js-cookie';
 import { createContext, useContext, useReducer } from 'react';
 import dataReducers from '../reducers/dataReducers';
-import { LIKE_UNLIKE_POST, SET_POSTS } from '../types';
+import {
+  ADD_POST,
+  CLEAR_ERROR,
+  DELETE_POSTS,
+  ERRORS,
+  LIKE_UNLIKE_POST,
+  LOADING,
+  SET_POSTS,
+} from '../types';
 
 const DataContext = createContext();
 
@@ -12,12 +20,43 @@ export const DataProvider = ({ children }) => {
     posts: [],
     post: {},
     loading: false,
+    error: null,
+    loading: false,
   };
 
   const [state, dispatch] = useReducer(dataReducers, initialState);
 
   const loadPosts = (posts) => {
     dispatch({ type: SET_POSTS, payload: posts });
+  };
+
+  const deletePost = async (id) => {
+    try {
+      const token = cookie.get('token');
+      await Axios.delete(`/api/v1/post/${id}`, {
+        headers: { Authorization: token },
+      });
+      dispatch({ type: DELETE_POSTS, payload: id });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const addPost = async (newPost) => {
+    dispatch({ type: LOADING });
+
+    try {
+      const token = cookie.get('token');
+      const { data } = await Axios.post('/api/v1/post', newPost, {
+        headers: { Authorization: token },
+      });
+      dispatch({ type: ADD_POST, payload: data });
+
+      dispatch({ type: CLEAR_ERROR });
+    } catch (error) {
+      console.error(error.response.data);
+      dispatch({ type: ERRORS, payload: error.response.data });
+    }
   };
 
   const likeUnlikePosts = async (postId) => {
@@ -44,6 +83,8 @@ export const DataProvider = ({ children }) => {
         state,
         likeUnlikePosts,
         loadPosts,
+        deletePost,
+        addPost,
       }}>
       {children}
     </DataContext.Provider>
