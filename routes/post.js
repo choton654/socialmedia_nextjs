@@ -14,6 +14,7 @@ router
       let postData = {};
 
       const post = await Post.findOne({ _id: req.params.id })
+        .populate({ path: 'user', select: 'name avatar' })
         .populate('comments')
         .populate('likes');
       if (!post) {
@@ -21,7 +22,10 @@ router
       }
       postData = post;
       postData.comments = [];
-      const comments = await Comment.find({ postId: req.params.id });
+      const comments = await Comment.find({ postId: req.params.id }).populate({
+        path: 'user',
+        select: 'name',
+      });
       comments.forEach((comment) => postData.comments.push(comment));
       return res.status(200).json(postData);
     } catch (error) {
@@ -79,8 +83,11 @@ router
   })
 
   // add comment to post
-  .put('/:postId/comment', authUser, async (req, res) => {
+  .post('/:postId/comment', authUser, async (req, res) => {
     const { postId } = req.params;
+    if (isEmpty(req.body.text)) {
+      return res.status(400).json({ msg: 'text is required' });
+    }
     try {
       const { text } = req.body;
       const post = await Post.findOne({ _id: postId });
@@ -96,14 +103,13 @@ router
         avatar: req.user.avatar,
       }).save();
 
-      // const commentCount = (await Comment.find({ postId })).length;
-
-      if (!newComment) {
-        return res.status(404).json({ msg: 'faild to create comment' });
-      }
-      res.status(200).json({ newComment });
+      // if (!newComment) {
+      //   return res.status(404).json({ msg: 'faild to create comment' });
+      // }
+      res.status(200).json(newComment);
     } catch (error) {
       console.error(error);
+      res.status(500).json({ error: error.code });
     }
   })
 

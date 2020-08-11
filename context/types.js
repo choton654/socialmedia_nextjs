@@ -17,3 +17,4 @@ export const ADD_POST = 'ADD_POST';
 export const LOADING = 'LOADING';
 export const ERRORS = 'ERRORS';
 export const CLEAR_ERROR = 'CLEAR_ERROR';
+export const ADD_COMMENT = 'ADD_COMMENT';

@@ -15,11 +15,12 @@ function AddPost({ classes }) {
   const [state, setstate] = useState({
     title: '',
     open: false,
-    isSubmit: false,
+    error: null,
   });
 
   const { addPost } = DataState();
   const {
+    clearErrors,
     state: { loading, error },
   } = DataState();
 
@@ -30,7 +31,13 @@ function AddPost({ classes }) {
     });
   };
   const handleClose = () => {
-    setstate({ ...state, open: false, isSubmit: false });
+    clearErrors();
+    setstate({
+      ...state,
+      open: false,
+      title: '',
+      error: null,
+    });
   };
 
   const handleChange = (event) => {
@@ -39,15 +46,19 @@ function AddPost({ classes }) {
       [event.target.name]: event.target.value,
     });
   };
-  const { isSubmit } = state;
+
   useEffect(() => {
-    if (isSubmit) {
-      addPost({ title: state.title });
+    if (error) {
+      setstate({ ...state, error: error });
+    }
+    if (!error && !loading) {
+      setstate({ ...state, title: '' });
       handleClose();
     }
-  }, [isSubmit]);
+  }, [error, loading]);
+
   const handleSubmit = () => {
-    setstate({ ...state, isSubmit: true });
+    addPost({ title: state.title });
   };
 
   return (
@@ -59,8 +70,6 @@ function AddPost({ classes }) {
         Create
       </Button>
       <Dialog open={state.open} onClose={handleClose} fullWidth maxWidth='sm'>
-        {loading && <CircularProgress color='secondary' />}
-        {/* {error && <p>{error.msg}</p>} */}
         <DialogTitle>Create New Post</DialogTitle>
         <DialogContent>
           <form>
@@ -70,9 +79,9 @@ function AddPost({ classes }) {
               label='Add Post'
               multiline
               rows='3'
-              helperText={error ? error.msg : null}
-              error={error ? true : false}
-              placeholder='Add Post'
+              helperText={state.error ? state.error.msg : null}
+              error={state.error ? true : false}
+              placeholder='Title'
               className={classes.textField}
               value={state.title}
               onChange={handleChange}
@@ -81,12 +90,18 @@ function AddPost({ classes }) {
           </form>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color='primary'>
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit} color='primary'>
-            Save
-          </Button>
+          {loading ? (
+            <CircularProgress color='secondary' />
+          ) : (
+            <>
+              <Button onClick={handleClose} color='primary'>
+                Cancel
+              </Button>
+              <Button onClick={handleSubmit} color='primary'>
+                Save
+              </Button>
+            </>
+          )}
         </DialogActions>
       </Dialog>
     </div>

@@ -5,15 +5,15 @@ import { withStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import ChatIcon from '@material-ui/icons/Chat';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Link from 'next/link';
 import React from 'react';
 import DeletePost from '../components/DeletePost';
-import { DataState } from '../context/context/dataContext';
 import { UserState } from '../context/context/userContext';
+import LikeButton from './LikeButton';
+import PostDialog from './PostDialog';
+
 function Post({
   classes,
   post: {
@@ -26,7 +26,6 @@ function Post({
   },
 }) {
   dayjs.extend(relativeTime);
-  const { likeUnlikePosts, deletePost } = DataState();
   const {
     state: {
       authenticated,
@@ -34,14 +33,6 @@ function Post({
       credential: { _id: userId },
     },
   } = UserState();
-
-  const likedPost = () => {
-    if (userLikes && userLikes.find((like) => like?.postId === id)) {
-      return true;
-    } else {
-      return false;
-    }
-  };
 
   const isDelete = authenticated && _id === userId;
 
@@ -67,38 +58,22 @@ function Post({
           {dayjs(createdAt).fromNow()}
         </Typography>
         <Typography variant='body1'>{title}</Typography>
+        <div
+          style={{
+            paddingTop: '10px',
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}>
+          <LikeButton id={id} />
+          <span>{likes} Likes</span>
+          <Tooltip title='Comments'>
+            <ChatIcon color='primary' />
+          </Tooltip>
+          <span>{comments} Comments</span>
+          {isDelete && <DeletePost id={id} />}
+          <PostDialog id={id} comments={comments} />
+        </div>
       </CardContent>
-      {!authenticated ? (
-        <Link href='/login'>
-          <a>
-            <Tooltip title='Like'>
-              <FavoriteBorderIcon color='primary' />
-            </Tooltip>
-          </a>
-        </Link>
-      ) : likedPost() ? (
-        <Tooltip
-          title='Undo like'
-          onClick={() => {
-            likeUnlikePosts(id);
-          }}>
-          <FavoriteIcon color='primary' />
-        </Tooltip>
-      ) : (
-        <Tooltip
-          title='Like'
-          onClick={() => {
-            likeUnlikePosts(id);
-          }}>
-          <FavoriteBorderIcon color='primary' />
-        </Tooltip>
-      )}
-      <span>{likes} Likes</span>
-      <Tooltip title='Comments'>
-        <ChatIcon color='primary' />
-      </Tooltip>
-      <span>{comments} Comments</span>
-      {isDelete && <DeletePost id={id} />}
     </Card>
   );
 }

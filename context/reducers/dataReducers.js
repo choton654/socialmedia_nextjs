@@ -1,4 +1,5 @@
 import {
+  ADD_COMMENT,
   ADD_POST,
   CLEAR_ERROR,
   DELETE_POSTS,
@@ -6,6 +7,7 @@ import {
   LIKE_UNLIKE_POST,
   LOADING,
   LOADING_DATA,
+  SET_POST,
   SET_POSTS,
 } from '../types';
 
@@ -27,6 +29,9 @@ export default function dataReducers(state, action) {
         (post) => post._id === action.payload._id,
       );
       state.posts[index].likes = action.payload.likes;
+      // if (state.post._id === action.payload._id) {
+      //   state.post = action.payload;
+      // }
       return {
         ...state,
       };
@@ -40,6 +45,15 @@ export default function dataReducers(state, action) {
         ...state,
         posts: [...state.posts, action.payload],
       };
+    case ADD_COMMENT: {
+      return {
+        ...state,
+        post: {
+          ...state.post,
+          comments: [action.payload, ...state.post.comments],
+        },
+      };
+    }
     case LOADING:
       return {
         ...state,
@@ -56,6 +70,11 @@ export default function dataReducers(state, action) {
         ...state,
         loading: false,
         error: null,
+      };
+    case SET_POST:
+      return {
+        ...state,
+        post: action.payload,
       };
     default:
       return state;
