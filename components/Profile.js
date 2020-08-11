@@ -17,14 +17,14 @@ import React from 'react';
 import { UserState } from '../context/context/userContext';
 import EditDetails from './EditDetails';
 
-function Profile({ classes, user }) {
+function Profile({ classes, user, isCurrent }) {
   const {
     editUserDetails,
     uploadImage,
     state: {
       authenticated,
       loading,
-      credential: { avatar, name, bio, location, website, createdAt },
+      credential: { _id, avatar, name, bio, location, website, createdAt },
     },
   } = UserState();
 
@@ -53,14 +53,16 @@ function Profile({ classes, user }) {
               onChange={handleImageChange}
             />
             <Tooltip title='Edit profile picture' placement='top'>
-              <IconButton onClick={handleEditPicture}>
-                <EditIcon color='primary' />
-              </IconButton>
+              {isCurrent && (
+                <IconButton onClick={handleEditPicture}>
+                  <EditIcon color='primary' />
+                </IconButton>
+              )}
             </Tooltip>
           </div>
           <hr />
           <div className='profile-details'>
-            <Link href={`/user/${name}`}>
+            <Link href={`/user/${_id}`}>
               <MuiLink variant='h5' color='primary'>
                 @{name}
               </MuiLink>

@@ -2,6 +2,7 @@ import {
   ADD_COMMENT,
   ADD_POST,
   CLEAR_ERROR,
+  DELETE_COMMENTS,
   DELETE_POSTS,
   ERRORS,
   LIKE_UNLIKE_POST,
@@ -54,6 +55,17 @@ export default function dataReducers(state, action) {
         },
       };
     }
+    case DELETE_COMMENTS:
+      return {
+        ...state,
+        post: {
+          ...state.post,
+          comments: state.post.comments.filter(
+            (comment) => comment._id !== action.payload._id,
+          ),
+        },
+      };
+
     case LOADING:
       return {
         ...state,

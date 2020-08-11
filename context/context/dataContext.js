@@ -6,6 +6,7 @@ import {
   ADD_COMMENT,
   ADD_POST,
   CLEAR_ERROR,
+  DELETE_COMMENTS,
   DELETE_POSTS,
   ERRORS,
   LIKE_UNLIKE_POST,
@@ -13,7 +14,6 @@ import {
   SET_POST,
   SET_POSTS,
 } from '../types';
-
 const DataContext = createContext();
 
 // eslint-disable-next-line react/prop-types
@@ -39,6 +39,17 @@ export const DataProvider = ({ children }) => {
         headers: { Authorization: token },
       });
       dispatch({ type: DELETE_POSTS, payload: id });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const deleteComment = async (_id, postId) => {
+    try {
+      const token = cookie.get('token');
+      await Axios.delete(`/api/v1/post/${postId}/comment/${_id}`, {
+        headers: { Authorization: token },
+      });
+      dispatch({ type: DELETE_COMMENTS, payload: { _id, postId } });
     } catch (error) {
       console.error(error);
     }
@@ -126,6 +137,7 @@ export const DataProvider = ({ children }) => {
         addPost,
         getSinglePost,
         addCommentToPost,
+        deleteComment,
       }}>
       {children}
     </DataContext.Provider>

@@ -22,10 +22,12 @@ router
       }
       postData = post;
       postData.comments = [];
-      const comments = await Comment.find({ postId: req.params.id }).populate({
-        path: 'user',
-        select: 'name',
-      });
+      const comments = await Comment.find({ postId: req.params.id })
+        .populate({
+          path: 'user',
+          select: 'name',
+        })
+        .sort({ createdAt: 'desc' });
       comments.forEach((comment) => postData.comments.push(comment));
       return res.status(200).json(postData);
     } catch (error) {

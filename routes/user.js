@@ -18,26 +18,42 @@ router
       const user = await User.findOne({ _id: req.params.id });
 
       if (user) {
-        userData.user = user;
+        // userData.user = user;
+        userData.credential = user;
       } else {
         return res.status(404).json({ msg: 'no user found' });
       }
+
       userData.posts = [];
+
       const posts = await Post.find({ user: req.params.id })
+        .populate({ path: 'user', select: 'name avatar' })
         .populate('comments')
-        .populate('likes')
-        .populate('user');
-      posts.forEach((post) =>
-        userData.posts.push({
-          title: post.title,
-          createdAt: post.createdAt,
-          userHandle: post.userHandle,
-          avatar: post.user.avatar,
-          likeCount: post.likes,
-          commentCount: post.comments,
-          postId: post._id,
+        .populate('likes');
+
+      posts.forEach((post) => userData.posts.push(post));
+
+      //
+      userData.likes = [];
+      const likes = await Like.find({ user: req.params.id });
+      likes.forEach((like) => userData.likes.push(like));
+      userData.notifications = [];
+      const notifications = await Notification.find({
+        recipient: req.params.id,
+      }).limit(10);
+      notifications.forEach((data) =>
+        userData.notifications.push({
+          recipient: data.recipient,
+          sender: data.sender,
+          createdAt: data.createdAt,
+          screamId: data.screamId,
+          type: data.type,
+          read: data.read,
+          notificationId: data._id,
         }),
       );
+      //
+
       res.status(200).json(userData);
     } catch (error) {
       console.error(error);

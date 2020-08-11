@@ -65,7 +65,7 @@ function PostDialog({ id, classes, comments: commentCount }) {
             </div>
           ) : (
             <>
-              <Grid container spacing={4}>
+              <Grid container>
                 <Grid item sm={5}>
                   <img
                     src={avatar}
@@ -74,7 +74,7 @@ function PostDialog({ id, classes, comments: commentCount }) {
                   />
                 </Grid>
                 <Grid item sm={7}>
-                  <Link href={`/user/${name}`}>
+                  <Link href={`/user/${_id}`}>
                     <a>
                       <Typography color='primary' variant='h5'>
                         @{name}
@@ -95,8 +95,10 @@ function PostDialog({ id, classes, comments: commentCount }) {
                     <span>{commentCount} comments</span>
                   </div>
                 </Grid>
-                <CommentForm id={id} />
-                <Comments comments={comments} />
+                <Grid item sm={12}>
+                  <CommentForm id={id} />
+                  <Comments comments={comments} />
+                </Grid>
               </Grid>
             </>
           )}

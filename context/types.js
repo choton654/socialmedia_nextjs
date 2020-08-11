@@ -18,3 +18,4 @@ export const LOADING = 'LOADING';
 export const ERRORS = 'ERRORS';
 export const CLEAR_ERROR = 'CLEAR_ERROR';
 export const ADD_COMMENT = 'ADD_COMMENT';
+export const DELETE_COMMENTS = 'DELETE_COMMENTS';

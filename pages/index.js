@@ -22,20 +22,18 @@ function Index({ classes, posts, user }) {
     }
   }, [user, posts]);
 
-  let recentPostMarkup =
-    statePosts.length !== 0 ? (
-      statePosts.map((post) => <Post key={post._id} post={post} />)
-    ) : (
-      <p>loading...</p>
-    );
   return (
     <main className={classes.root}>
       <Grid container spacing={2}>
         <Grid item sm={8} xs={12}>
-          {recentPostMarkup}
+          {statePosts.length !== 0 ? (
+            statePosts.map((post) => <Post key={post._id} post={post} />)
+          ) : (
+            <p>loading...</p>
+          )}
         </Grid>
         <Grid item sm={4} xs={12}>
-          <Profile user={user} />
+          <Profile user={user} isCurrent={true} />
         </Grid>
       </Grid>
     </main>

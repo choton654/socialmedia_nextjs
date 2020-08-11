@@ -18,7 +18,7 @@ function Post({
   classes,
   post: {
     title,
-    user: { avatar, name, _id },
+    user: { avatar, name, _id: userId },
     comments,
     likes,
     id,
@@ -30,11 +30,11 @@ function Post({
     state: {
       authenticated,
       likes: userLikes,
-      credential: { _id: userId },
+      credential: { _id: authUserId },
     },
   } = UserState();
 
-  const isDelete = authenticated && _id === userId;
+  const isDelete = authenticated && userId === authUserId;
 
   return (
     <Card className={classes.card}>
@@ -45,7 +45,7 @@ function Post({
       />
       <CardContent className={classes.content}>
         <Typography variant='h5' color='primary'>
-          <Link href={`/user/${name}`}>
+          <Link href={`/user/${userId}`}>
             <a
               style={{
                 textDecoration: 'none',

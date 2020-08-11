@@ -33,7 +33,6 @@ export default function userReducers(state, action) {
         loading: false,
         authenticated: true,
       };
-
     case LOADING_USER:
       return {
         ...state,
