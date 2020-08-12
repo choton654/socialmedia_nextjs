@@ -1,4 +1,4 @@
-import { withStyles } from '@material-ui/core';
+import { Tooltip, withStyles } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -63,9 +63,15 @@ function EditDetails({ user, classes, editUserDetails }) {
 
   return (
     <>
-      <Button variant='contained' color='primary' onClick={handleOpen}>
-        Edit
-      </Button>
+      <Tooltip
+        title='Edit Profile'
+        style={{
+          cursor: 'pointer',
+        }}>
+        <Button variant='contained' color='primary' onClick={handleOpen}>
+          Edit
+        </Button>
+      </Tooltip>
       <Dialog open={state.open} onClose={handleClose} fullWidth maxWidth='sm'>
         <DialogTitle>Edit your details</DialogTitle>
         <DialogContent>

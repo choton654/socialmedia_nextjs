@@ -49,6 +49,11 @@ export default function dataReducers(state, action) {
     case ADD_COMMENT: {
       return {
         ...state,
+        posts: state.posts.map((post) =>
+          post._id === action.payload.postId
+            ? { ...post, comments: (post.comments += 1) }
+            : post,
+        ),
         post: {
           ...state.post,
           comments: [action.payload, ...state.post.comments],
@@ -58,6 +63,11 @@ export default function dataReducers(state, action) {
     case DELETE_COMMENTS:
       return {
         ...state,
+        posts: state.posts.map((post) =>
+          post._id === action.payload.postId
+            ? { ...post, comments: (post.comments -= 1) }
+            : post,
+        ),
         post: {
           ...state.post,
           comments: state.post.comments.filter(

@@ -1,6 +1,5 @@
 import { Tooltip } from '@material-ui/core';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import Link from 'next/link';
 import React from 'react';
 import { DataState } from '../context/context/dataContext';
@@ -28,28 +27,26 @@ function LikeButton({ id }) {
       {!authenticated ? (
         <Link href='/login'>
           <a>
-            <Tooltip title='Like'>
-              <FavoriteBorderIcon color='primary' />
+            <Tooltip
+              title='login'
+              style={{
+                cursor: 'pointer',
+              }}>
+              <ThumbUpIcon color='primary' />
             </Tooltip>
           </a>
         </Link>
-      ) : likedPost() ? (
-        <Tooltip
-          title='Undo like'
-          placement='top'
-          onClick={() => {
-            likeUnlikePosts(id);
-          }}>
-          <FavoriteIcon color='primary' />
-        </Tooltip>
       ) : (
         <Tooltip
-          title='Like'
+          style={{
+            cursor: 'pointer',
+          }}
+          title='like Unlike'
           placement='top'
           onClick={() => {
             likeUnlikePosts(id);
           }}>
-          <FavoriteBorderIcon color='primary' />
+          <ThumbUpIcon color='primary' />
         </Tooltip>
       )}
     </div>

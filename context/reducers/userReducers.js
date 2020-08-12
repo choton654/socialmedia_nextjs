@@ -4,6 +4,7 @@ import {
   LOADING_UI,
   LOADING_USER,
   SET_AUTHENTICATED,
+  SET_CURRENT_USER,
   SET_ERRORS,
   SET_UNAUTHENTICATED,
   SET_USER,
@@ -32,6 +33,11 @@ export default function userReducers(state, action) {
         ...action.payload,
         loading: false,
         authenticated: true,
+      };
+    case SET_CURRENT_USER:
+      return {
+        ...state,
+        credential: action.payload.data,
       };
     case LOADING_USER:
       return {

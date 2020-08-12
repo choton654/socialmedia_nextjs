@@ -24,9 +24,15 @@ function Profile({ classes, user, isCurrent }) {
     state: {
       authenticated,
       loading,
-      credential: { _id, avatar, name, bio, location, website, createdAt },
+      credential: { _id: authUserId },
     },
   } = UserState();
+  console.log(user);
+  const {
+    credential: { _id, avatar, name, bio, location, website, createdAt },
+  } = user;
+
+  const isEdit = authenticated && _id === authUserId;
 
   const handleImageChange = (e) => {
     const image = e.target.files[0];
@@ -52,13 +58,13 @@ function Profile({ classes, user, isCurrent }) {
               hidden='hidden'
               onChange={handleImageChange}
             />
-            <Tooltip title='Edit profile picture' placement='top'>
-              {isCurrent && (
+            {(isCurrent || isEdit) && (
+              <Tooltip title='Edit profile picture' placement='top'>
                 <IconButton onClick={handleEditPicture}>
                   <EditIcon color='primary' />
                 </IconButton>
-              )}
-            </Tooltip>
+              </Tooltip>
+            )}
           </div>
           <hr />
           <div className='profile-details'>
@@ -89,12 +95,13 @@ function Profile({ classes, user, isCurrent }) {
             <CalendarToday color='primary' />{' '}
             <span>Joined {dayjs(createdAt).format('MMM YYYY')}</span>
           </div>
-
-          <EditDetails
-            className={classes.buttons}
-            user={user}
-            editUserDetails={editUserDetails}
-          />
+          {(isCurrent || isEdit) && (
+            <EditDetails
+              className={classes.buttons}
+              user={user}
+              editUserDetails={editUserDetails}
+            />
+          )}
         </div>
       </Paper>
     ) : (

@@ -68,7 +68,7 @@ MyApp.getInitialProps = async (appContext) => {
   };
 
   if (!token) {
-    const protectRoute = ctx.pathname === '/user';
+    const protectRoute = ctx.pathname === '/' || ctx.pathname === '/user/[id]';
     if (protectRoute) {
       redirectUser(ctx, '/login');
     }

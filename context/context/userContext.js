@@ -75,9 +75,11 @@ export const UserProvider = ({ children }) => {
     dispatch({ type: LOADING_USER });
     try {
       const token = cookie.get('token');
-      const res = await Axios.put('/api/v1/user/image', formData, {
+      const { data } = await Axios.put('/api/v1/user/image', formData, {
         headers: { Authorization: token },
       });
+      // dispatch({ type: SET_CURRENT_USER, payload: data });
+      // dispatch({ type: CLEAR_ERRORS });
       loadUser();
       router.reload();
     } catch (error) {
@@ -89,10 +91,13 @@ export const UserProvider = ({ children }) => {
     dispatch({ type: LOADING_USER });
     try {
       const token = cookie.get('token');
-      const res = await Axios.put('/api/v1/user', userDetails, {
+      const { data } = await Axios.put('/api/v1/user', userDetails, {
         headers: { Authorization: token },
       });
+      // dispatch({ type: SET_CURRENT_USER, payload: data });
+      // dispatch({ type: CLEAR_ERRORS });
       loadUser();
+      router.reload();
     } catch (error) {
       console.error(error);
     }

@@ -2,9 +2,7 @@ import { CardMedia } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { withStyles } from '@material-ui/core/styles';
-import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
-import ChatIcon from '@material-ui/icons/Chat';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Link from 'next/link';
@@ -66,12 +64,9 @@ function Post({
           }}>
           <LikeButton id={id} />
           <span>{likes} Likes</span>
-          <Tooltip title='Comments'>
-            <ChatIcon color='primary' />
-          </Tooltip>
+          <PostDialog id={id} comments={comments} />
           <span>{comments} Comments</span>
           {isDelete && <DeletePost id={id} />}
-          <PostDialog id={id} comments={comments} />
         </div>
       </CardContent>
     </Card>

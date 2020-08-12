@@ -1,13 +1,12 @@
 import { Grid, withStyles } from '@material-ui/core';
 import Axios from 'axios';
 import React, { useEffect } from 'react';
-import Post from '../../components/Post';
-import Profile from '../../components/Profile';
-import { DataState } from '../../context/context/dataContext';
-import { UserState } from '../../context/context/userContext';
+import Post from '../../../components/Post';
+import Profile from '../../../components/Profile';
+import { DataState } from '../../../context/context/dataContext';
+import { UserState } from '../../../context/context/userContext';
 function User({ data, classes, user }) {
-  const { credential: User, posts } = data;
-  console.log(user, posts);
+  const { credential, posts } = data;
 
   const { loadUser } = UserState();
 
@@ -15,7 +14,7 @@ function User({ data, classes, user }) {
 
   useEffect(() => {
     if (user) {
-      loadUser(data);
+      loadUser(user);
     }
     if (posts) {
       loadPosts(posts);
@@ -36,7 +35,7 @@ function User({ data, classes, user }) {
           {User === null ? (
             <p>no user found</p>
           ) : (
-            <Profile user={User} isCurrent={false} />
+            <Profile user={data} isCurrent={false} />
           )}
         </Grid>
       </Grid>
@@ -51,11 +50,15 @@ const styles = (theme) => ({
   },
 });
 
-User.getInitialProps = async ({ query: { userId: id } }) => {
-  const { data } = await Axios.get(`http://localhost:3000/api/v1/user/${id}`);
-  console.log(data);
-
-  return { data };
+User.getInitialProps = async ({ query: { id }, pathname }) => {
+  console.log(pathname);
+  try {
+    const { data } = await Axios.get(`http://localhost:3000/api/v1/user/${id}`);
+    return { data };
+  } catch (error) {
+    console.error(error.response);
+    return { data: null };
+  }
 };
 
 export default withStyles(styles)(User);

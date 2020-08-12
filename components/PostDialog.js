@@ -9,13 +9,13 @@ import {
 } from '@material-ui/core';
 import ChatIcon from '@material-ui/icons/Chat';
 import CloseIcon from '@material-ui/icons/Close';
-import UnfoldMoreIcon from '@material-ui/icons/UnfoldMore';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { DataState } from '../context/context/dataContext';
 import CommentForm from './CommentForm';
 import Comments from './Comments';
+
 function PostDialog({ id, classes, comments: commentCount }) {
   const [state, setstate] = useState({
     open: false,
@@ -53,11 +53,23 @@ function PostDialog({ id, classes, comments: commentCount }) {
 
   return (
     <div>
-      <Tooltip title='Show Details' placement='top'>
-        <UnfoldMoreIcon color='primary' onClick={() => handleOpen()} />
+      <Tooltip title='Show comments' placement='top'>
+        <ChatIcon
+          color='primary'
+          style={{
+            cursor: 'pointer',
+          }}
+          onClick={() => handleOpen()}
+        />
       </Tooltip>
       <Dialog open={state.open} onClose={handleClose} fullWidth maxWidth='sm'>
-        <CloseIcon onClick={handleClose} />
+        <CloseIcon
+          onClick={handleClose}
+          style={{
+            margin: '10px auto',
+            cursor: 'pointer',
+          }}
+        />
         <DialogContent className={classes.dialogContent}>
           {loading ? (
             <div className={classes.spinnerDiv}>

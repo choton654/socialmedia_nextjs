@@ -15,9 +15,6 @@ function Navbar({ classes, user }) {
   return (
     <AppBar className={classes.appBar}>
       <Toolbar className={classes.toolbarTitle}>
-        <Link href='/'>
-          <a className={classes.icon}>Home</a>
-        </Link>
         {!authenticated ? (
           <>
             <Link href='/login'>
@@ -29,6 +26,9 @@ function Navbar({ classes, user }) {
           </>
         ) : (
           <>
+            <Link href='/'>
+              <a className={classes.icon}>Home</a>
+            </Link>
             <AddPost />
             <Button color='inherit' className={classes.icon}>
               Notifications

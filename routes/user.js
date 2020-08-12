@@ -37,21 +37,6 @@ router
       userData.likes = [];
       const likes = await Like.find({ user: req.params.id });
       likes.forEach((like) => userData.likes.push(like));
-      userData.notifications = [];
-      const notifications = await Notification.find({
-        recipient: req.params.id,
-      }).limit(10);
-      notifications.forEach((data) =>
-        userData.notifications.push({
-          recipient: data.recipient,
-          sender: data.sender,
-          createdAt: data.createdAt,
-          screamId: data.screamId,
-          type: data.type,
-          read: data.read,
-          notificationId: data._id,
-        }),
-      );
       //
 
       res.status(200).json(userData);

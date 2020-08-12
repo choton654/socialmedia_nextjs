@@ -43,6 +43,7 @@ export const DataProvider = ({ children }) => {
       console.error(error);
     }
   };
+
   const deleteComment = async (_id, postId) => {
     try {
       const token = cookie.get('token');

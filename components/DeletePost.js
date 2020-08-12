@@ -22,7 +22,13 @@ function DeletePost({ id }) {
 
   return (
     <div>
-      <DeleteIcon onClick={handleOpen} color='error' />
+      <DeleteIcon
+        onClick={handleOpen}
+        color='error'
+        style={{
+          cursor: 'pointer',
+        }}
+      />
       <Dialog open={state.open} onClose={handleClose} fullWidth maxWidth='sm'>
         <DialogTitle>Do You Want To Delete</DialogTitle>
         <DialogActions>
