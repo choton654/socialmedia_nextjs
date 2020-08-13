@@ -8,6 +8,7 @@ import {
   TextField,
   withStyles,
 } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
 import React, { useEffect, useState } from 'react';
 import { DataState } from '../context/context/dataContext';
 
@@ -67,7 +68,7 @@ function AddPost({ classes }) {
         color='inherit'
         className={classes.icon}
         onClick={() => handleOpen()}>
-        Create
+        <AddIcon />
       </Button>
       <Dialog open={state.open} onClose={handleClose} fullWidth maxWidth='sm'>
         <DialogTitle>Create New Post</DialogTitle>

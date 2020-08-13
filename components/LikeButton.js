@@ -1,11 +1,10 @@
-import { Tooltip } from '@material-ui/core';
-import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import { Badge, Tooltip } from '@material-ui/core';
+import FavoriteIcon from '@material-ui/icons/Favorite';
 import Link from 'next/link';
 import React from 'react';
 import { DataState } from '../context/context/dataContext';
 import { UserState } from '../context/context/userContext';
-
-function LikeButton({ id }) {
+function LikeButton({ id, likes }) {
   const { likeUnlikePosts } = DataState();
   const {
     state: { authenticated, likes: userLikes },
@@ -32,12 +31,36 @@ function LikeButton({ id }) {
               style={{
                 cursor: 'pointer',
               }}>
-              <ThumbUpIcon color='primary' />
+              <FavoriteIcon color='primary' />
             </Tooltip>
           </a>
         </Link>
       ) : (
         <Tooltip
+          title='Like Unlike'
+          placement='top'
+          style={{
+            cursor: 'pointer',
+          }}>
+          <Badge
+            style={{
+              cursor: 'pointer',
+            }}
+            badgeContent={likes}
+            color='secondary'
+            onClick={() => {
+              likeUnlikePosts(id);
+            }}>
+            <FavoriteIcon color='primary' />
+          </Badge>
+        </Tooltip>
+      )}
+    </div>
+  );
+}
+
+{
+  /* <Tooltip
           style={{
             cursor: 'pointer',
           }}
@@ -46,11 +69,7 @@ function LikeButton({ id }) {
           onClick={() => {
             likeUnlikePosts(id);
           }}>
-          <ThumbUpIcon color='primary' />
-        </Tooltip>
-      )}
-    </div>
-  );
+        </Tooltip> */
 }
 
 export default LikeButton;

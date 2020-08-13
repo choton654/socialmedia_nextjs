@@ -1,4 +1,5 @@
 import {
+  Badge,
   CircularProgress,
   Dialog,
   DialogContent,
@@ -71,14 +72,16 @@ function PostDialog({
 
   return (
     <div>
-      <Tooltip title='Show comments' placement='top'>
-        <ChatIcon
-          color='primary'
-          style={{
-            cursor: 'pointer',
-          }}
-          onClick={() => handleOpen()}
-        />
+      <Tooltip
+        title='Comments'
+        placement='top'
+        onClick={() => handleOpen()}
+        style={{
+          cursor: 'pointer',
+        }}>
+        <Badge badgeContent={commentCount} color='secondary'>
+          <ChatIcon color='primary' />
+        </Badge>
       </Tooltip>
       <Dialog open={state.open} onClose={handleClose} fullWidth maxWidth='sm'>
         <CloseIcon
@@ -117,12 +120,27 @@ function PostDialog({
                   <Typography variant='body1'>{title}</Typography>
                   <div
                     style={{
+                      paddingTop: '10px',
+                      // width: '50px',
                       display: 'flex',
+                      // justifyContent: 'space-between',
                     }}>
-                    <LikeButton id={id} />
-                    <span>{likes} Likes</span>
-                    <ChatIcon color='primary' />
-                    <span>{commentCount} comments</span>
+                    <LikeButton id={id} likes={likes} />
+                    <Tooltip
+                      title='Comments'
+                      placement='top'
+                      style={{
+                        cursor: 'pointer',
+                      }}>
+                      <Badge
+                        style={{
+                          cursor: 'pointer',
+                        }}
+                        badgeContent={commentCount}
+                        color='secondary'>
+                        <ChatIcon color='primary' />
+                      </Badge>
+                    </Tooltip>
                   </div>
                 </Grid>
                 <Grid item sm={12}>

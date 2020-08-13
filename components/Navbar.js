@@ -2,7 +2,10 @@ import { withStyles } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
+import HomeIcon from '@material-ui/icons/Home';
+import KeyboardReturnIcon from '@material-ui/icons/KeyboardReturn';
 import Link from 'next/link';
+import router from 'next/router';
 import React from 'react';
 import { UserState } from '../context/context/userContext';
 import AddPost from './AddPost';
@@ -27,16 +30,16 @@ function Navbar({ classes, user }) {
           </>
         ) : (
           <>
-            <Link href='/'>
-              <a className={classes.icon}>Home</a>
-            </Link>
+            <Button color='inherit' className={classes.icon}>
+              <HomeIcon onClick={() => router.push('/')} />
+            </Button>
             <AddPost />
             <Notifications />
             <Button
               color='inherit'
               className={classes.icon}
               onClick={() => logOutUser()}>
-              Logout
+              <KeyboardReturnIcon />
             </Button>
           </>
         )}

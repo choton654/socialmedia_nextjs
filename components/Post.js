@@ -62,10 +62,9 @@ function Post({
           style={{
             paddingTop: '10px',
             display: 'flex',
-            justifyContent: 'space-between',
+            // justifyContent: 'space-between',
           }}>
-          <LikeButton id={id} />
-          <span>{likes} Likes</span>
+          <LikeButton id={id} likes={likes} />
           <PostDialog
             id={id}
             comments={comments}
@@ -73,7 +72,6 @@ function Post({
             postId={postId}
             openDialog
           />
-          <span>{comments} Comments</span>
           {isDelete && <DeletePost id={id} />}
         </div>
       </CardContent>
