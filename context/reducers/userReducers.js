@@ -1,8 +1,8 @@
 import {
   CLEAR_ERRORS,
-  LIKE_UNLIKE_POST,
   LOADING_UI,
   LOADING_USER,
+  MARK_NOTIFICATIONS,
   SET_AUTHENTICATED,
   SET_CURRENT_USER,
   SET_ERRORS,
@@ -61,13 +61,18 @@ export default function userReducers(state, action) {
         loading: false,
         error: null,
       };
-    case LIKE_UNLIKE_POST:
+    // case LIKE_UNLIKE_POST:
+    //   return {
+    //     ...state,
+    //     likes: [
+    //       ...state.likes,
+    //       { postId: action.payload._id, user: action.payload.user },
+    //     ],
+    //   };
+    case MARK_NOTIFICATIONS:
+      state.notifications.filter((not) => not.read === true);
       return {
         ...state,
-        likes: [
-          ...state.likes,
-          { postId: action.payload._id, user: action.payload.user },
-        ],
       };
     default:
       return state;

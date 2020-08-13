@@ -11,12 +11,21 @@ import ChatIcon from '@material-ui/icons/Chat';
 import CloseIcon from '@material-ui/icons/Close';
 import dayjs from 'dayjs';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
 import { DataState } from '../context/context/dataContext';
 import CommentForm from './CommentForm';
 import Comments from './Comments';
+import LikeButton from './LikeButton';
 
-function PostDialog({ id, classes, comments: commentCount }) {
+function PostDialog({
+  id,
+  postId,
+  userId,
+  openDialog,
+  classes,
+  comments: commentCount,
+}) {
   const [state, setstate] = useState({
     open: false,
   });
@@ -36,14 +45,23 @@ function PostDialog({ id, classes, comments: commentCount }) {
     },
   } = DataState();
 
-  const handleOpen = () => {
+  useEffect(() => {
+    if (openDialog && postId) {
+      handleOpen(postId);
+    }
+  }, [openDialog, postId]);
+
+  const router = useRouter();
+
+  const handleOpen = (postId) => {
     setstate({
       ...state,
       open: true,
     });
-    getSinglePost(id);
+    getSinglePost(postId ? postId : id);
   };
   const handleClose = () => {
+    window.history.pushState(null, null, state.oldPath);
     clearErrors();
     setstate({
       ...state,
@@ -97,12 +115,12 @@ function PostDialog({ id, classes, comments: commentCount }) {
                     {dayjs(createdAt).format('h:mm a, MMMM DD YYYY')}
                   </Typography>
                   <Typography variant='body1'>{title}</Typography>
-                  {/* <LikeButton id={id} />
-                  <span>{likes} Likes</span> */}
                   <div
                     style={{
                       display: 'flex',
                     }}>
+                    <LikeButton id={id} />
+                    <span>{likes} Likes</span>
                     <ChatIcon color='primary' />
                     <span>{commentCount} comments</span>
                   </div>

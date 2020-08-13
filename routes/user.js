@@ -87,18 +87,20 @@ router
       userData.notifications = [];
       const notifications = await Notification.find({
         recipient: req.user._id,
-      }).limit(10);
-      notifications.forEach((data) =>
+      })
+        .limit(10)
+        .populate({ path: 'sender', model: 'User', select: 'name' });
+      notifications.forEach((data) => {
         userData.notifications.push({
           recipient: data.recipient,
-          sender: data.sender,
+          sender: data.sender.name,
           createdAt: data.createdAt,
-          screamId: data.screamId,
+          postId: data.postId,
           type: data.type,
           read: data.read,
           notificationId: data._id,
-        }),
-      );
+        });
+      });
       return res.status(200).json(userData);
     } catch (error) {
       console.error(error);
@@ -154,7 +156,7 @@ router
         err: 'please upload a image file',
       });
     }
-    console.log(req.files);
+    // console.log(req.files);
 
     file.name = `photo_${req.user._id}${path.parse(file.name).ext}`;
 

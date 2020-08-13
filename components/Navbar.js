@@ -6,6 +6,7 @@ import Link from 'next/link';
 import React from 'react';
 import { UserState } from '../context/context/userContext';
 import AddPost from './AddPost';
+import Notifications from './Notifications';
 function Navbar({ classes, user }) {
   const {
     logOutUser,
@@ -30,9 +31,7 @@ function Navbar({ classes, user }) {
               <a className={classes.icon}>Home</a>
             </Link>
             <AddPost />
-            <Button color='inherit' className={classes.icon}>
-              Notifications
-            </Button>
+            <Notifications />
             <Button
               color='inherit'
               className={classes.icon}

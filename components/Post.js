@@ -14,6 +14,8 @@ import PostDialog from './PostDialog';
 
 function Post({
   classes,
+  openDialog,
+  postId,
   post: {
     title,
     user: { avatar, name, _id: userId },
@@ -64,7 +66,13 @@ function Post({
           }}>
           <LikeButton id={id} />
           <span>{likes} Likes</span>
-          <PostDialog id={id} comments={comments} />
+          <PostDialog
+            id={id}
+            comments={comments}
+            userId={userId}
+            postId={postId}
+            openDialog
+          />
           <span>{comments} Comments</span>
           {isDelete && <DeletePost id={id} />}
         </div>

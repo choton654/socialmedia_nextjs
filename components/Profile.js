@@ -27,7 +27,7 @@ function Profile({ classes, user, isCurrent }) {
       credential: { _id: authUserId },
     },
   } = UserState();
-  console.log(user);
+  // console.log(user);
   const {
     credential: { _id, avatar, name, bio, location, website, createdAt },
   } = user;

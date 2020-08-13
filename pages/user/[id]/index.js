@@ -5,7 +5,7 @@ import Post from '../../../components/Post';
 import Profile from '../../../components/Profile';
 import { DataState } from '../../../context/context/dataContext';
 import { UserState } from '../../../context/context/userContext';
-function User({ data, classes, user }) {
+function User({ data, classes, user, postId }) {
   const { credential, posts } = data;
 
   const { loadUser } = UserState();
@@ -27,8 +27,18 @@ function User({ data, classes, user }) {
         <Grid item sm={8} xs={12}>
           {posts === null ? (
             <p>No posts from this user</p>
-          ) : (
+          ) : !postId ? (
             posts.map((post) => <Post key={post.id} post={post} />)
+          ) : (
+            posts.map((post) => {
+              if (post._id !== postId) {
+                return <Post key={post.id} post={post} />;
+              } else {
+                return (
+                  <Post key={post.id} post={post} postId={postId} openDialog />
+                );
+              }
+            })
           )}
         </Grid>
         <Grid item sm={4} xs={12}>
@@ -50,11 +60,13 @@ const styles = (theme) => ({
   },
 });
 
-User.getInitialProps = async ({ query: { id }, pathname }) => {
-  console.log(pathname);
+User.getInitialProps = async ({ query, pathname }) => {
+  console.log(query);
+
   try {
+    const { id, postId } = query;
     const { data } = await Axios.get(`http://localhost:3000/api/v1/user/${id}`);
-    return { data };
+    return { data, postId };
   } catch (error) {
     console.error(error.response);
     return { data: null };

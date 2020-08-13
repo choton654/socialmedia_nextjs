@@ -20,7 +20,7 @@ const DataContext = createContext();
 export const DataProvider = ({ children }) => {
   const initialState = {
     posts: [],
-    post: { user: {} },
+    post: { user: {}, comments: [] },
     loading: false,
     error: null,
     loading: false,

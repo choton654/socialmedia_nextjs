@@ -7,6 +7,7 @@ import {
   CLEAR_ERRORS,
   LOADING_UI,
   LOADING_USER,
+  MARK_NOTIFICATIONS,
   SET_AUTHENTICATED,
   SET_ERRORS,
   SET_UNAUTHENTICATED,
@@ -107,6 +108,18 @@ export const UserProvider = ({ children }) => {
     dispatch({ type: SET_USER, payload: user });
   };
 
+  const markNotificationsRead = async (notificationsIds) => {
+    try {
+      const token = cookie.get('token');
+      await Axios.put('/api/v1/user/notifications', notificationsIds, {
+        headers: { Authorization: token },
+      });
+      dispatch({ type: MARK_NOTIFICATIONS });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     // eslint-disable-next-line react/react-in-jsx-scope
     <UserContext.Provider
@@ -118,6 +131,7 @@ export const UserProvider = ({ children }) => {
         logOutUser,
         uploadImage,
         editUserDetails,
+        markNotificationsRead,
       }}>
       {children}
     </UserContext.Provider>

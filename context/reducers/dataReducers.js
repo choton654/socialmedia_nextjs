@@ -14,10 +14,10 @@ import {
 
 export default function dataReducers(state, action) {
   switch (action.type) {
-    case LOADING_DATA:
+    case SET_POST:
       return {
         ...state,
-        loading: true,
+        post: action.payload,
       };
     case SET_POSTS:
       return {
@@ -30,9 +30,9 @@ export default function dataReducers(state, action) {
         (post) => post._id === action.payload._id,
       );
       state.posts[index].likes = action.payload.likes;
-      // if (state.post._id === action.payload._id) {
-      //   state.post = action.payload;
-      // }
+      if (state.post._id === action.payload._id) {
+        state.post.likes = action.payload.likes;
+      }
       return {
         ...state,
       };
@@ -75,7 +75,11 @@ export default function dataReducers(state, action) {
           ),
         },
       };
-
+    case LOADING_DATA:
+      return {
+        ...state,
+        loading: true,
+      };
     case LOADING:
       return {
         ...state,
@@ -93,11 +97,7 @@ export default function dataReducers(state, action) {
         loading: false,
         error: null,
       };
-    case SET_POST:
-      return {
-        ...state,
-        post: action.payload,
-      };
+
     default:
       return state;
   }

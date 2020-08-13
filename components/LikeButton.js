@@ -11,13 +11,13 @@ function LikeButton({ id }) {
     state: { authenticated, likes: userLikes },
   } = UserState();
 
-  const likedPost = () => {
-    if (userLikes && userLikes.find((like) => like?.postId === id)) {
-      return true;
-    } else {
-      return false;
-    }
-  };
+  // const likedPost = () => {
+  //   if (userLikes && userLikes.find((like) => like?.postId === id)) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // };
 
   return (
     <div
