@@ -43,8 +43,7 @@ function Index({ classes, posts, user }) {
 Index.getInitialProps = async (ctx) => {
   let posts = [];
   const res = await Axios.get(
-    "http://localhost:3000/api/v1/post" ||
-      ` https://enigmatic-tor-00686.herokuapp.com/${process.env.PORT}/api/v1/post`
+    ` https://enigmatic-tor-00686.herokuapp.com/${process.env.PORT}/api/v1/post`
   );
   posts = res.data;
   return { posts };
@@ -58,3 +57,5 @@ const styles = (theme) => ({
 });
 
 export default withStyles(styles)(Index);
+
+// "http://localhost:3000/api/v1/post" ||

@@ -66,8 +66,7 @@ User.getInitialProps = async ({ query, pathname }) => {
   try {
     const { id, postId } = query;
     const { data } = await Axios.get(
-      `http://localhost:3000/api/v1/user/${id}` ||
-        ` https://enigmatic-tor-00686.herokuapp.com/${process.env.PORT}/api/v1/user/${id}`
+      ` https://enigmatic-tor-00686.herokuapp.com/${process.env.PORT}/api/v1/user/${id}`
     );
     return { data, postId };
   } catch (error) {
@@ -77,3 +76,4 @@ User.getInitialProps = async ({ query, pathname }) => {
 };
 
 export default withStyles(styles)(User);
+// `http://localhost:3000/api/v1/user/${id}`

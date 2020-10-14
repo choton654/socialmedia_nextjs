@@ -75,8 +75,7 @@ MyApp.getInitialProps = async (appContext) => {
   } else {
     try {
       const { data } = await Axios.get(
-        "http://localhost:3000/api/v1/user" ||
-          ` https://enigmatic-tor-00686.herokuapp.com/${process.env.PORT}/api/v1/user`,
+        ` https://enigmatic-tor-00686.herokuapp.com/${process.env.PORT}/api/v1/user`,
         {
           headers: { Authorization: token },
         }
@@ -96,3 +95,5 @@ MyApp.getInitialProps = async (appContext) => {
 };
 
 export default MyApp;
+
+// "http://localhost:3000/api/v1/user" ||
