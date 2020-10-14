@@ -7,8 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server",
     "build": "next build",
-    "start": "node server.js -p $PORT"
-    
+    "start": "node server.js -p $PORT",
+    "heroku-postbuild": "npm run build"
   },
   "keywords": [],
   "author": "",
