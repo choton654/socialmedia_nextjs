@@ -1,10 +1,10 @@
-import { Grid, withStyles } from '@material-ui/core';
-import Axios from 'axios';
-import React, { useEffect } from 'react';
-import Post from '../../../components/Post';
-import Profile from '../../../components/Profile';
-import { DataState } from '../../../context/context/dataContext';
-import { UserState } from '../../../context/context/userContext';
+import { Grid, withStyles } from "@material-ui/core";
+import Axios from "axios";
+import React, { useEffect } from "react";
+import Post from "../../../components/Post";
+import Profile from "../../../components/Profile";
+import { DataState } from "../../../context/context/dataContext";
+import { UserState } from "../../../context/context/userContext";
 function User({ data, classes, user, postId }) {
   const { credential, posts } = data;
 
@@ -55,8 +55,8 @@ function User({ data, classes, user, postId }) {
 
 const styles = (theme) => ({
   root: {
-    maxWidth: '1200px',
-    margin: '80px auto 0 auto',
+    maxWidth: "1200px",
+    margin: "80px auto 0 auto",
   },
 });
 
@@ -65,7 +65,10 @@ User.getInitialProps = async ({ query, pathname }) => {
 
   try {
     const { id, postId } = query;
-    const { data } = await Axios.get(`http://localhost:3000/api/v1/user/${id}`);
+    const { data } = await Axios.get(
+      `http://localhost:3000/api/v1/user/${id}` ||
+        ` https://enigmatic-tor-00686.herokuapp.com/${process.env.PORT}/api/v1/user/${id}`
+    );
     return { data, postId };
   } catch (error) {
     console.error(error.response);
