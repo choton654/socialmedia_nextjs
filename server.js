@@ -1,6 +1,6 @@
 const express = require("express");
 const { app, creeateserver } = require("./app");
-const port = parseInt(process.env.PORT, 10) || 3000;
+const port = process.env.PORT || 3000;
 const handle = app.getRequestHandler();
 
 const fileUpload = require("express-fileupload");
@@ -25,13 +25,13 @@ app.prepare().then(() => {
   server.use(express.json({ extended: false }));
   server.use(fileUpload());
 
-  server.get("/_next/*", (req, res) => {
-    handle(req, res);
-  });
+  // server.get("/_next/*", (req, res) => {
+  //   handle(req, res);
+  // });
 
-  server.get("/static/*", (req, res) => {
-    handle(req, res);
-  });
+  // server.get("/static/*", (req, res) => {
+  //   handle(req, res);
+  // });
 
   server.use("/api/v1/post", postRoute);
   server.use("/api/v1/auth", authRoute);
