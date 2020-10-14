@@ -5,7 +5,7 @@ const isEmail = require("validator/lib/isEmail");
 const isLength = require("validator/lib/isLength");
 const isEmpty = require("validator/lib/isEmpty");
 const User = require("../model/User");
-const { JWT_SECRET } = require("../src/keys");
+// const { JWT_SECRET } = require("../src/keys");
 
 router
 
@@ -38,7 +38,7 @@ router
       };
       const newUser = await User.create(user);
 
-      const token = jwt.sign({ userId: newUser._id }, JWT_SECRET, {
+      const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, {
         expiresIn: "7d",
       });
 
@@ -77,7 +77,7 @@ router
 
       // if so jenerate a token
       if (passwordMatch) {
-        const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
           expiresIn: "7d",
         });
 

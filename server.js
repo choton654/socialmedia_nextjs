@@ -11,7 +11,7 @@ const userRoute = require("./routes/user");
 const connectDb = require("./utils/connectDb");
 
 const { commentStream, likeStream } = require("./changeStream");
-// require('dotenv').config();
+require("dotenv").config();
 
 connectDb();
 

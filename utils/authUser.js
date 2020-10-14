@@ -1,13 +1,16 @@
 const jwt = require("jsonwebtoken");
 const User = require("../model/User");
 const Router = require("next/router");
-const { JWT_SECRET } = require("../src/keys");
+// const { JWT_SECRET } = require("../src/keys");
 exports.authUser = async (req, res, next) => {
   if (!req.headers.authorization) {
     return res.status(404).json({ error: "Unauthorized" });
   }
   try {
-    const { userId } = jwt.verify(req.headers.authorization, JWT_SECRET);
+    const { userId } = jwt.verify(
+      req.headers.authorization,
+      process.env.JWT_SECRET
+    );
 
     const user = await User.findOne({ _id: userId });
     if (!user) {
