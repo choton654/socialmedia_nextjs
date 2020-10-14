@@ -74,13 +74,9 @@ MyApp.getInitialProps = async (appContext) => {
     }
   } else {
     try {
-      const { data } = await Axios.get(
-        "http://localhost:3000/api/v1/user" ||
-          "https://enigmatic-tor-00686.herokuapp.com/api/v1/user",
-        {
-          headers: { Authorization: token },
-        }
-      );
+      const { data } = await Axios.get("http://localhost:3000/api/v1/user", {
+        headers: { Authorization: token },
+      });
       appProps.pageProps.user = data;
     } catch (error) {
       console.error(error);

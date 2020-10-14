@@ -42,10 +42,7 @@ function Index({ classes, posts, user }) {
 
 Index.getInitialProps = async (ctx) => {
   let posts = [];
-  const res = await Axios.get(
-    "https://enigmatic-tor-00686.herokuapp.com/api/v1/post" ||
-      "http://localhost:3000/api/v1/post"
-  );
+  const res = await Axios.get("http://localhost:3000/api/v1/post");
   posts = res.data;
   return { posts };
 };
