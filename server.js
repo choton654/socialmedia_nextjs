@@ -7,7 +7,7 @@ const fileUpload = require("express-fileupload");
 const postRoute = require("./routes/post");
 const authRoute = require("./routes/auth");
 const userRoute = require("./routes/user");
-
+const cors = require("cors");
 const connectDb = require("./utils/connectDb");
 
 const { commentStream, likeStream } = require("./changeStream");
@@ -17,6 +17,7 @@ connectDb();
 
 app.prepare().then(() => {
   const server = express();
+  server.use(cors());
   const { httpServer, io } = creeateserver(server);
 
   likeStream(io);
