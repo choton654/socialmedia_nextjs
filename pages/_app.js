@@ -50,45 +50,45 @@ MyApp.propTypes = {
   pageProps: PropTypes.object.isRequired,
 };
 
-MyApp.getInitialProps = async (appContext) => {
-  // calls page's `getInitialProps` and fills `appProps.pageProps`
-  const { ctx } = appContext;
+// MyApp.getInitialProps = async (appContext) => {
+//   // calls page's `getInitialProps` and fills `appProps.pageProps`
+//   const { ctx } = appContext;
 
-  const appProps = await App.getInitialProps(appContext);
+//   const appProps = await App.getInitialProps(appContext);
 
-  const { token } = parseCookies(ctx);
+//   const { token } = parseCookies(ctx);
 
-  const redirectUser = (ctx, location) => {
-    if (ctx.req) {
-      ctx.res.writeHead(302, { Location: location });
-      ctx.res.end();
-    } else {
-      Router.push(location);
-    }
-  };
+//   const redirectUser = (ctx, location) => {
+//     if (ctx.req) {
+//       ctx.res.writeHead(302, { Location: location });
+//       ctx.res.end();
+//     } else {
+//       Router.push(location);
+//     }
+//   };
 
-  if (!token) {
-    const protectRoute = ctx.pathname === "/" || ctx.pathname === "/user/[id]";
-    if (protectRoute) {
-      redirectUser(ctx, "/login");
-    }
-  } else {
-    try {
-      const { data } = await Axios.get("http://localhost:3000/api/v1/user", {
-        headers: { Authorization: token },
-      });
-      appProps.pageProps.user = data;
-    } catch (error) {
-      console.error(error);
-      // throw out invalid token
-      destroyCookie(ctx, token);
+//   if (!token) {
+//     const protectRoute = ctx.pathname === "/" || ctx.pathname === "/user/[id]";
+//     if (protectRoute) {
+//       redirectUser(ctx, "/login");
+//     }
+//   } else {
+//     try {
+//       const { data } = await Axios.get("http://localhost:3000/api/v1/user", {
+//         headers: { Authorization: token },
+//       });
+//       appProps.pageProps.user = data;
+//     } catch (error) {
+//       console.error(error);
+//       // throw out invalid token
+//       destroyCookie(ctx, token);
 
-      // redirect to login
-      redirectUser(ctx, "/login");
-    }
-  }
+//       // redirect to login
+//       redirectUser(ctx, "/login");
+//     }
+//   }
 
-  return { ...appProps };
-};
+//   return { ...appProps };
+// };
 
 export default MyApp;
