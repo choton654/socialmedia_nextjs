@@ -4,3 +4,6 @@ node_modules
 next.config.*
 now.json
 .env
+.vercel
+
+src/keys.js

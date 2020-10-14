@@ -1,17 +1,18 @@
-const router = require('express').Router();
-const { authUser } = require('../utils/authUser');
-const Post = require('../model/Post');
-const User = require('../model/User');
-const mongoose = require('mongoose');
-const Notification = require('../model/Notification');
-const isEmpty = require('validator/lib/isEmpty');
-const Like = require('../model/Like');
-const path = require('path');
+const router = require("express").Router();
+const { authUser } = require("../utils/authUser");
+const Post = require("../model/Post");
+const User = require("../model/User");
+const mongoose = require("mongoose");
+const Notification = require("../model/Notification");
+// const isEmpty = require('validator/lib/isEmpty');
+const { isEmpty } = require("validator");
+const Like = require("../model/Like");
+const path = require("path");
 
 router
 
   // get any user details
-  .get('/:id', async (req, res) => {
+  .get("/:id", async (req, res) => {
     try {
       let userData = {};
 
@@ -21,15 +22,15 @@ router
         // userData.user = user;
         userData.credential = user;
       } else {
-        return res.status(404).json({ msg: 'no user found' });
+        return res.status(404).json({ msg: "no user found" });
       }
 
       userData.posts = [];
 
       const posts = await Post.find({ user: req.params.id })
-        .populate({ path: 'user', select: 'name avatar' })
-        .populate('comments')
-        .populate('likes');
+        .populate({ path: "user", select: "name avatar" })
+        .populate("comments")
+        .populate("likes");
 
       posts.forEach((post) => userData.posts.push(post));
 
@@ -47,18 +48,18 @@ router
   })
 
   // posts by user
-  .get('/:id/post', async (req, res) => {
+  .get("/:id/post", async (req, res) => {
     const { id } = req.params;
 
     try {
       const post = await Post.find({
         user: mongoose.Types.ObjectId(id),
       })
-        .sort({ createdAt: 'desc' })
-        .populate('comments');
+        .sort({ createdAt: "desc" })
+        .populate("comments");
 
       if (!post) {
-        return res.status(404).json({ msg: 'no post found' });
+        return res.status(404).json({ msg: "no post found" });
       }
       const userPost = post.map((post) => ({
         ...post._doc,
@@ -74,7 +75,7 @@ router
   })
 
   //  get own user details
-  .get('/', authUser, async (req, res) => {
+  .get("/", authUser, async (req, res) => {
     try {
       let userData = {};
       const user = await User.findOne({ _id: req.user._id });
@@ -89,7 +90,7 @@ router
         recipient: req.user._id,
       })
         .limit(10)
-        .populate({ path: 'sender', model: 'User', select: 'name' });
+        .populate({ path: "sender", model: "User", select: "name" });
       notifications.forEach((data) => {
         userData.notifications.push({
           recipient: data.recipient,
@@ -109,7 +110,7 @@ router
   })
 
   // add user details
-  .put('/', authUser, async (req, res) => {
+  .put("/", authUser, async (req, res) => {
     let userDetails = {};
     const { bio, website, location, name } = req.body;
     try {
@@ -117,7 +118,7 @@ router
       if (!isEmpty(bio.trim())) userDetails.bio = bio;
       if (!isEmpty(website.trim())) {
         // https://website.com
-        if (website.trim().substring(0, 4) !== 'http') {
+        if (website.trim().substring(0, 4) !== "http") {
           userDetails.website = `http://${website.trim()}`;
         } else userDetails.website = website;
       }
@@ -129,11 +130,11 @@ router
         {
           new: true,
           runValidators: true,
-        },
+        }
       );
       res
         .status(200)
-        .json({ msg: 'Details added successfully', data: updatedUser });
+        .json({ msg: "Details added successfully", data: updatedUser });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: error.code });
@@ -141,19 +142,19 @@ router
   })
 
   //  upload image
-  .put('/image', authUser, async (req, res) => {
+  .put("/image", authUser, async (req, res) => {
     if (!req.files) {
       return res.status(400).json({
         success: false,
-        err: 'please upload a file',
+        err: "please upload a file",
       });
     }
     const file = req.files.file;
 
-    if (!file.mimetype.startsWith('image')) {
+    if (!file.mimetype.startsWith("image")) {
       return res.status(400).json({
         success: false,
-        err: 'please upload a image file',
+        err: "please upload a image file",
       });
     }
     // console.log(req.files);
@@ -165,36 +166,36 @@ router
         console.log(err);
         return res.status(500).json({
           success: false,
-          err: 'problem with file upload',
+          err: "problem with file upload",
         });
       }
 
       const updatedUser = await User.findOneAndUpdate(
         { _id: req.user._id },
         { avatar: `/static/uploads/${file.name}` },
-        { new: true },
+        { new: true }
       );
       res
         .status(200)
-        .json({ msg: 'image uploaded successfully', data: updatedUser });
+        .json({ msg: "image uploaded successfully", data: updatedUser });
     });
   })
 
   // mark notifications read
-  .put('/notifications', authUser, (req, res) => {
+  .put("/notifications", authUser, (req, res) => {
     try {
       req.body.forEach(async (id) => {
         const notification = await Notification.findOne({ _id: id });
         if (!notification) {
-          return res.status(400).json({ msg: 'no notification found' });
+          return res.status(400).json({ msg: "no notification found" });
         }
         await Notification.findByIdAndUpdate(
           { _id: id },
           { read: true },
-          { new: true },
+          { new: true }
         );
       });
-      res.status(200).json({ msg: 'Notifications marked read' });
+      res.status(200).json({ msg: "Notifications marked read" });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: error.code });

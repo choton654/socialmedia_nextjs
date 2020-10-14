@@ -1,33 +1,34 @@
-const router = require('express').Router();
-const Post = require('../model/Post');
-const Like = require('../model/Like');
-const { authUser } = require('../utils/authUser');
-const Comment = require('../model/Comment');
-const Notification = require('../model/Notification');
-const { default: isEmpty } = require('validator/lib/isempty');
+const router = require("express").Router();
+const Post = require("../model/Post");
+const Like = require("../model/Like");
+const { authUser } = require("../utils/authUser");
+const Comment = require("../model/Comment");
+const Notification = require("../model/Notification");
+// const { default: isEmpty } = require('validator/lib/isempty');
+const { isEmpty } = require("validator");
 
 router
 
   // get a single post
-  .get('/:id', async (req, res) => {
+  .get("/:id", async (req, res) => {
     try {
       let postData = {};
 
       const post = await Post.findOne({ _id: req.params.id })
-        .populate({ path: 'user', select: 'name avatar' })
-        .populate('comments')
-        .populate('likes');
+        .populate({ path: "user", select: "name avatar" })
+        .populate("comments")
+        .populate("likes");
       if (!post) {
-        return res.status(404).json({ msg: 'no post found' });
+        return res.status(404).json({ msg: "no post found" });
       }
       postData = post;
       postData.comments = [];
       const comments = await Comment.find({ postId: req.params.id })
         .populate({
-          path: 'user',
-          select: 'name',
+          path: "user",
+          select: "name",
         })
-        .sort({ createdAt: 'desc' });
+        .sort({ createdAt: "desc" });
       comments.forEach((comment) => postData.comments.push(comment));
       return res.status(200).json(postData);
     } catch (error) {
@@ -37,7 +38,7 @@ router
   })
 
   // delete a post
-  .delete('/:id', authUser, async (req, res) => {
+  .delete("/:id", authUser, async (req, res) => {
     const { id } = req.params;
 
     try {
@@ -45,57 +46,57 @@ router
       if (!postToDelete) {
         return res
           .status(400)
-          .json({ msg: 'you have no permission to delete this post' });
+          .json({ msg: "you have no permission to delete this post" });
       }
       await Post.findByIdAndDelete({ _id: id });
       await Comment.remove({ postId: { $in: id } });
       await Like.remove({ postId: { $in: id } });
       await Notification.remove({ postId: { $in: id } });
-      res.status(200).json({ msg: 'post deleted' });
+      res.status(200).json({ msg: "post deleted" });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ msg: 'failed to delete post' });
+      res.status(500).json({ msg: "failed to delete post" });
     }
   })
 
   // delete comment from post
-  .delete('/:postId/comment/:commentId', authUser, async (req, res) => {
+  .delete("/:postId/comment/:commentId", authUser, async (req, res) => {
     const { postId, commentId } = req.params;
 
     try {
       const post = await Post.findOne({ _id: postId });
 
       if (!post) {
-        return res.status(404).json({ msg: 'no post found' });
+        return res.status(404).json({ msg: "no post found" });
       }
       const commentToDelete = await Comment.findOne({
         user: req.user._id,
       });
 
       if (!commentToDelete) {
-        return res.status(404).json({ msg: 'no comments found' });
+        return res.status(404).json({ msg: "no comments found" });
       }
 
       await Comment.findByIdAndDelete({ _id: commentId });
 
-      res.status(200).json({ msg: 'comment deleted' });
+      res.status(200).json({ msg: "comment deleted" });
     } catch (error) {
       console.error(error);
     }
   })
 
   // add comment to post
-  .post('/:postId/comment', authUser, async (req, res) => {
+  .post("/:postId/comment", authUser, async (req, res) => {
     const { postId } = req.params;
     if (isEmpty(req.body.text)) {
-      return res.status(400).json({ msg: 'text is required' });
+      return res.status(400).json({ msg: "text is required" });
     }
     try {
       const { text } = req.body;
       const post = await Post.findOne({ _id: postId });
 
       if (!post) {
-        return res.status(404).json({ msg: 'no post found' });
+        return res.status(404).json({ msg: "no post found" });
       }
 
       const newComment = await new Comment({
@@ -116,13 +117,13 @@ router
   })
 
   // like or unlike post
-  .put('/:postId/like-unlike', authUser, async (req, res) => {
+  .put("/:postId/like-unlike", authUser, async (req, res) => {
     const { postId } = req.params;
     try {
       const post = await Post.findOne({ _id: postId });
 
       if (!post) {
-        return res.status(404).json({ msg: 'no post found' });
+        return res.status(404).json({ msg: "no post found" });
       }
 
       const like = await Like.findOne({ user: req.user._id, postId });
@@ -136,7 +137,7 @@ router
         }).save();
       }
 
-      const likedPost = await Post.findOne({ _id: postId }).populate('likes');
+      const likedPost = await Post.findOne({ _id: postId }).populate("likes");
 
       res.status(200).json(likedPost);
     } catch (error) {
@@ -146,17 +147,17 @@ router
   })
 
   // get all posts
-  .get('/', async (req, res) => {
+  .get("/", async (req, res) => {
     const posts = await Post.find()
       .populate({
-        path: 'user',
-        model: 'User',
-        select: '_id name avatar',
+        path: "user",
+        model: "User",
+        select: "_id name avatar",
       })
-      .populate('comments')
-      .populate('likes');
+      .populate("comments")
+      .populate("likes");
     if (posts.length === 0) {
-      return res.status(404).json({ msg: 'no post created' });
+      return res.status(404).json({ msg: "no post created" });
     }
 
     res.status(200).json(posts);
@@ -164,15 +165,15 @@ router
   })
 
   // create a post
-  .post('/', authUser, async (req, res) => {
+  .post("/", authUser, async (req, res) => {
     req.body.user = req.user;
     if (isEmpty(req.body.title)) {
-      return res.status(400).json({ msg: 'title is required' });
+      return res.status(400).json({ msg: "title is required" });
     }
     try {
       const post = await Post.create(req.body);
       if (!post) {
-        return res.status(404).json({ error: 'no post created' });
+        return res.status(404).json({ error: "no post created" });
       }
 
       res.status(200).json(post);

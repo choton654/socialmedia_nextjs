@@ -8,7 +8,7 @@ exports.likeStream = (io) => {
   const changeLikeStream = Like.watch({ fullDocument: 'updateLookup' });
   changeLikeStream.on('change', async (next) => {
     // process next document
-    console.log('new WS connection', { ...next });
+    // console.log('new WS connection', { ...next });
     let likeNotification;
     if (next.operationType === 'insert') {
       try {
@@ -31,10 +31,7 @@ exports.likeStream = (io) => {
     } else if (next.operationType === 'delete') {
       likeNotification = {};
     }
-    console.log('notification', likeNotification);
-    // io.on('connection', async (socket) => {
-    //   socket.emit('likeOnPost', { likeNotification });
-    // });
+    // console.log('notification', likeNotification);
   });
 };
 
@@ -45,24 +42,25 @@ exports.commentStream = (io) => {
     // console.log('new WS connection', { ...next });
     let commentNotification;
     if (next.operationType === 'insert') {
-      const commentedPost = await Post.findOne({
-        _id: next.fullDocument.postId,
-      });
-      commentNotification = {
-        postId: next.fullDocument.postId,
-        recipient: commentedPost.user,
-        sender: next.fullDocument.user,
-        type: 'comment',
-        read: false,
-      };
+      try {
+        const commentedPost = await Post.findOne({
+          _id: next.fullDocument.postId,
+        });
+        commentNotification = {
+          postId: next.fullDocument.postId,
+          recipient: commentedPost.user,
+          sender: next.fullDocument.user,
+          type: 'comment',
+          read: false,
+        };
 
-      await Notification.create(commentNotification);
+        await Notification.create(commentNotification);
+      } catch (error) {
+        console.error(error);
+      }
     } else if (next.operationType === 'delete') {
       commentNotification = {};
     }
-    console.log('notification', commentNotification);
-    // io.on('connection', (socket) => {
-    //   socket.emit('commentOnPost', { commentNotification });
-    // });
+    // console.log('notification', commentNotification);
   });
 };
