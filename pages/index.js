@@ -1,11 +1,11 @@
-import { withStyles } from '@material-ui/core';
-import Grid from '@material-ui/core/Grid';
-import Axios from 'axios';
-import React, { useEffect } from 'react';
-import Post from '../components/Post';
-import Profile from '../components/Profile';
-import { DataState } from '../context/context/dataContext';
-import { UserState } from '../context/context/userContext';
+import { withStyles } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
+import Axios from "axios";
+import React, { useEffect } from "react";
+import Post from "../components/Post";
+import Profile from "../components/Profile";
+import { DataState } from "../context/context/dataContext";
+import { UserState } from "../context/context/userContext";
 function Index({ classes, posts, user }) {
   const { loadUser } = UserState();
   const {
@@ -42,15 +42,18 @@ function Index({ classes, posts, user }) {
 
 Index.getInitialProps = async (ctx) => {
   let posts = [];
-  const res = await Axios.get('http://localhost:3000/api/v1/post');
+  const res = await Axios.get(
+    "https://enigmatic-tor-00686.herokuapp.com/api/v1/post" ||
+      "http://localhost:3000/api/v1/post"
+  );
   posts = res.data;
   return { posts };
 };
 
 const styles = (theme) => ({
   root: {
-    maxWidth: '1200px',
-    margin: '80px auto 0 auto',
+    maxWidth: "1200px",
+    margin: "80px auto 0 auto",
   },
 });
 
